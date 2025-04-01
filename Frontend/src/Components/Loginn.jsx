@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useEffect } from "react";
-import { use } from "react";
+import { useNavigate } from "react-router-dom";
 const SigUpContainer = styled.div`
   position : relative;
   width: 100vw;
@@ -100,30 +100,13 @@ const MsgConatiner = styled.div`
   padding-top: 8px;
   border-radius: 5px;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
-  transform: translateX(100%);
+  transform: ${({ visible }) => (visible ? "translateX(0%)" : "translateX(100%)")};
+  transition: transform 0.5s ease-in-out;
   @media(max-width : 763px){
     width: 40%;
   }
   @media(max-width : 450px){
     width: 55%;
-  }
-  @keyframes SlideIn {
-    from {
-      transform: translateX(100%);
-    }
-    to {
-      transform: translateX(0%);
-    }
-  }
-
-
-  @keyframes SlideOut {
-    from {
-      transform: translateX(0%);
-    }
-    to {
-      transform: translateX(100%);
-    }
   }
 `;
 
@@ -145,12 +128,12 @@ const Line = styled.div`
 
 `;
 
-export const Login = () => {
+export const Login = ({setLoggedIn}) => {
+  const navigate = useNavigate();
   const [userInfo, setuserInfo] = useState({ email: "", password: "" });
   const [res, setRes] = useState("");
   const [errors , setError] = useState(false);
   const [isVisible, setvisible] = useState(false);
-  const [clicked , setClicked] = useState(false);
   useEffect(() => {
     if (isVisible) {
       const timer = setTimeout(() => {
@@ -159,6 +142,7 @@ export const Login = () => {
 
       return () => clearTimeout(timer);
     }
+    
   }, [isVisible]);
   async function sendUserData(userInfo) {
     console.log(userInfo);
@@ -171,14 +155,17 @@ export const Login = () => {
         body: JSON.stringify(userInfo),
       });
       if(!res.ok){
-        setError(true);
-      }
-      else{
-        setError(false);
-      }
+      setError(true);
       const body = await res.json();
       setRes(body.msg);
       setvisible(true);
+      }
+      else{
+      if(res.ok){
+        setLoggedIn(true);
+        navigate("/");
+      }
+    }
     } catch (err) {
       console.error("Error:", err);
       setError(true);
@@ -186,23 +173,14 @@ export const Login = () => {
       setRes("An error occured");
     }
   }
-   function getAnimation(){
-      if(clicked){
-        if(isVisible){
-            return "SlideIn 0.5s forwards";
-        }
-        return "SlideOut 0.5s forwards";
-      }
-   }
+   
   return (
     
       <SigUpContainer>
-      {isVisible && (
-        <MsgConatiner visible={isVisible} style={{ animation: getAnimation() }}>
+        <MsgConatiner visible={isVisible} >
           {res}
           <Line visible={isVisible} err={errors} />
         </MsgConatiner>
-      )}
         <StyledContainer>
           <div style={{ alignSelf: "center" }}>
             <img src={img} alt="Blog Logo" />
@@ -252,7 +230,7 @@ export const Login = () => {
           </div>
           <Button
             style={{ fontSize: "14px", marginBottom: "13px" }}
-            onClick={() => {setClicked(true) ; sendUserData(userInfo)}}
+            onClick={() => { sendUserData(userInfo)}}
           >
             Sign In
           </Button>

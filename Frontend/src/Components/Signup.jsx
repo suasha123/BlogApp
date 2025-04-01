@@ -56,6 +56,18 @@ const InputEmail = styled.input`
     border: 2px solid #7c3aed;
   }
 `;
+// OTTP
+const Otp = styled.input`
+  outline: none;
+  height: 35px;
+  padding-left: 10px;
+  border: 2px solid #e7e9ed;
+  border-radius: 5px;
+  font-family: Nunito;
+  &:focus {
+    border: 2px solid #7c3aed;
+  }
+`;
 
 const InputPass = styled.input`
   outline: none;
@@ -64,7 +76,6 @@ const InputPass = styled.input`
   border-radius: 5px;
   font-family: Nunito;
 `;
-
 
 const Button = styled.button`
   font-family: Nunito;
@@ -98,7 +109,6 @@ const StyledContainer = styled.div`
   }
 `;
 
-
 const MsgConatiner = styled.div`
   width: 20%;
   height: 40px;
@@ -110,91 +120,106 @@ const MsgConatiner = styled.div`
   text-align: center;
   padding-top: 8px;
   border-radius: 5px;
-  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
+    rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
+    rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
   transform: translateX(100%);
-  animation: ${({ visible }) => (visible ? "SlideIn 0.5s forwards" : "SlideOut 0.5s forwards")};
-  @media(max-width : 1276px){
+  transform: ${({ visible }) =>
+    visible ? "translateX(0%)" : "translateX(100%)"};
+  transition: transform 0.5s ease-in-out;
+  @media (max-width: 1276px) {
     width: 27%;
-    font-size : 15px;
-    top : 20px;
+    font-size: 15px;
+    top: 20px;
   }
-  @media(max-width : 805px){
+  @media (max-width: 805px) {
     width: 30%;
-    top : 20px;
+    top: 20px;
   }
-  @media(max-width : 709px){
+  @media (max-width: 709px) {
     width: 50%;
-    top : 20px;
+    top: 20px;
   }
-  @media(max-width : 423px){
+  @media (max-width: 423px) {
     width: 62%;
-    top : 15px;
+    top: 15px;
   }
-  @media(max-width : 337px){
+  @media (max-width: 337px) {
     width: 75%;
-    top : 15px;
-  }
-  @keyframes SlideIn {
-    from {
-      transform: translateX(100%);
-    }
-    to {
-      transform: translateX(0%);
-    }
-  }
-
-
-  @keyframes SlideOut {
-    from {
-      transform: translateX(0%);
-    }
-    to {
-      transform: translateX(100%);
-    }
+    top: 15px;
   }
 `;
 
 const Line = styled.div`
-  position : absolute ;
-  height : 2px;
-  background-color : ${({errline}) => (errline ? "red" : "green")};
-  bottom : 0px;
-  border-radius : 5px;
-  animation: ${({ visible }) => (visible ? "WidthDecrease 2s forwards" : "none")};
-  @keyframes WidthDecrease{
-    from{
-      width : 100%;
+  position: absolute;
+  height: 2px;
+  background-color: ${({ errline }) => (errline ? "red" : "green")};
+  bottom: 0px;
+  border-radius: 5px;
+  animation: ${({ visible }) =>
+    visible ? "WidthDecrease 2s forwards" : "none"};
+  @keyframes WidthDecrease {
+    from {
+      width: 100%;
     }
-    to{
-      width : 0%;
+    to {
+      width: 0%;
     }
   }
-
 `;
 
+const LoadingBar = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  height: 5px;
+  background: linear-gradient(to right, #ff6b6b, #ffbb33);
+  animation:loading-animation 3s ease-out forwards;
+
+  @keyframes loading-animation {
+    0% { width: 0%; }
+    50% {width : 50% }
+    100% { width: 100%; }
+  }
+`;
 
 export const Signup = () => {
   const [normal, setNormal] = useState(true);
   const [hover, setHover] = useState(false);
   const [typing, setTyping] = useState(false);
   const [isVisible, setvisible] = useState(false);
-  const [res , setRes] =useState("");
-  const [err,setErr] = useState(false);
+  const [res, setRes] = useState("");
+  const [clicked, setClicked] = useState(false);
+  const [err, setErr] = useState(false);
+  const [loading , isLoading] = useState(false);
   const [userSignUp, setuserSignUp] = useState({
     name: "",
     email: "",
     password: "",
-    
+    otp: "",
   });
-  function checkFields(){
-     if(!userSignUp.email || !userSignUp.password || !userSignUp.name){
-        setvisible(true);
-        setErr(true);
-        setRes("All input Fileds are required");
-        return ;
-     }
-     handleData(userSignUp);
-     console.log(userSignUp);
+  function checkFields() {
+    if (!userSignUp.email || !userSignUp.password || !userSignUp.name) {
+      setvisible(true);
+      setErr(true);
+      setRes("All input Fileds are required");
+      return;
+    }
+    if(!clicked){
+      setvisible(true);
+      setErr(true);
+      setRes("Email verification needed");
+      return;
+    }
+    if (userSignUp.password.length < 8) {
+      setvisible(true);
+      setErr(true);
+      setRes("Weak Password");
+      return;
+    }
+    handleData(userSignUp);
+    console.log(userSignUp);
   }
   function getBorder() {
     if (hover) {
@@ -211,47 +236,84 @@ export const Signup = () => {
       }
     }
   }
-  useEffect(() => {
-      if (isVisible) {
-        const timer = setTimeout(() => {
-          setvisible(false);
-        }, 2000);
-  
-        return () => clearTimeout(timer);
-      }
-    }, [isVisible]);
-
-    async function handleData(userSignUp){
-      try{
-        const res = await fetch("/auth/sign-user",{
-          method : 'POST',
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(userSignUp),
-         })
-         if(!res.ok){
-          setErr(true);
-         }
-         else{
-          setErr(false);
-         }
-         const body = await res.json();
-          setvisible(true);
-          setRes(body.msg)
-      }
-      catch(err){
-          setErr(true);
-          setRes(err);
-          setvisible(true);
-      }
-           
+  async function generateOtp(email) {
+    if(!email){
+      setvisible(true);
+      setRes("Email Required");
+      setErr(true);
+      return ;
     }
+    try {
+      isLoading(true);
+      const res = await fetch('/auth/otp-generate', {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email })
+      });
+       const body = await res.json();
+       
+      if (!res.ok) {
+         setErr(true);
+      }
+      isLoading(false);
+      setvisible(true);
+      setRes(body.msg);
+
+      console.log("OTP sent to:", body.email);
+      if(res.ok){
+        setClicked(true);
+        setErr(false);
+      }
+    } catch (err) {
+      isLoading(false);
+      setvisible(true);
+      setRes(err);
+      console.error("Error generating OTP:", err);
+    }
+  }
+  
+  
+  useEffect(() => {
+    if (isVisible) {
+      const timer = setTimeout(() => {
+        setvisible(false);
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isVisible]);
+
+  async function handleData(userSignUp) {
+    try {
+      const res = await fetch("/auth/sign-user", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userSignUp),
+      });
+      if (!res.ok) {
+        setErr(true);
+      } else {
+        setErr(false);
+      }
+      const body = await res.json();
+      setvisible(true);
+      setRes(body.msg);
+    } catch (err) {
+      setErr(true);
+      setRes(err);
+      setvisible(true);
+    }
+  }
   return (
     <SigUpContainer>
-     <MsgConatiner visible={isVisible}>
-       {res} 
-      <Line visible={isVisible} errline={err}/>
+      {loading && <LoadingBar />}
+      <MsgConatiner visible={isVisible}>
+        {res}
+        <Line visible={isVisible} errline={err} />
       </MsgConatiner>
       <StyledContainer>
         <div
@@ -329,6 +391,7 @@ export const Signup = () => {
             Email
           </label>
           <InputEmail
+            type="email"
             name="email"
             onChange={(e) =>
               setuserSignUp({ ...userSignUp, email: e.target.value })
@@ -336,6 +399,32 @@ export const Signup = () => {
             value={userSignUp.email}
             placeholder="Enter your email address"
           />
+          <span
+            onClick={()=> {generateOtp(userSignUp.email)}}
+            style={{
+              color: "blue",
+              cursor: "pointer",
+              fontFamily: "Nunito",
+              display : clicked ? "none" : "block"
+            }}
+          >
+            Verify Otp ?
+          </span>
+          {clicked && (
+            <>
+            <label
+            htmlFor="otp"
+            style={{
+              fontFamily: "Nunito",
+            }}
+          >
+            Otp
+          </label>
+            <Otp name="otp"  type="text" value={userSignUp.otp} onChange={(e)=>setuserSignUp({...userSignUp,otp : e.target.value})}/>
+            <span onClick={()=>{generateOtp(userSignUp.email)}} style={{color : "blue" , fontFamily: "Nunito" , cursor : "pointer"}}>Re-send Otp</span>
+            </> 
+
+          )}
         </div>
         <div
           style={{
@@ -377,7 +466,7 @@ export const Signup = () => {
             placeholder="Enter your password"
             style={{
               border: getBorder(),
-              transition : "border 0.2s ease"
+              transition: "border 0.2s ease",
             }}
           />
         </div>
@@ -387,7 +476,7 @@ export const Signup = () => {
             fontSize: "14px",
             marginBottom: "13px",
           }}
-          onClick={()=>{
+          onClick={() => {
             checkFields();
           }}
         >
