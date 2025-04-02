@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { SlideBar } from "./SlidingBar";
 import { Sidebar } from "./Sidebar";
 import { Link } from "react-router-dom";
+import { UserProfile } from "./UserProfile";
 import portfolio from "../assets/portfolio.png";
 const Nav = styled.nav`
   display: flex;
@@ -136,7 +137,8 @@ const Line = styled.div`
   }
 
 `;
-export const NavBar = ({ LoggedIn }) => {
+export const NavBar = ({ LoggedIn,data}) => {
+  const [profile , setProfile] = useState(false);
   const [open, isopen] = useState(false);
   const [clicked, setCliked] = useState(false);
   const [isVisible, setvisible] = useState(false);
@@ -202,16 +204,24 @@ export const NavBar = ({ LoggedIn }) => {
           }}
         />
         <SearchIcon onClick={() => setCliked(!clicked)} />
-        {LoggedIn && (
+        {!LoggedIn && (
+          <>
           <img
+          onClick={()=> {setProfile(!profile)}}
             style={{
               width: "40px",
               height: "40px",
+              position : "relative",
+              cursor : "pointer"
             }}
             src={portfolio}
           />
+          {profile && (
+            <UserProfile data={data}/>
+          )}
+          </>
         )}
-        {!LoggedIn && (
+        {LoggedIn && (
           <LoginButton to="/login">
             <CiLogin style={{ fontSize: "20px", strokeWidth: "1.5" }} />
             Sign-In

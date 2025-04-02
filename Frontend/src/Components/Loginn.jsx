@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useEffect } from "react";
+import { UserProfile } from "./UserProfile";
 import { useNavigate } from "react-router-dom";
 const SigUpContainer = styled.div`
   position : relative;
@@ -128,7 +129,7 @@ const Line = styled.div`
 
 `;
 
-export const Login = ({setLoggedIn}) => {
+export const Login = ({setLoggedIn , setData}) => {
   const navigate = useNavigate();
   const [userInfo, setuserInfo] = useState({ email: "", password: "" });
   const [res, setRes] = useState("");
@@ -154,17 +155,19 @@ export const Login = ({setLoggedIn}) => {
         },
         body: JSON.stringify(userInfo),
       });
+      const body = await res.json();
       if(!res.ok){
       setError(true);
-      const body = await res.json();
       setRes(body.msg);
       setvisible(true);
       }
       else{
-      if(res.ok){
-        setLoggedIn(true);
-        navigate("/");
+        if (res.ok) {
+          setData(body);
+          setLoggedIn(true);
+          navigate("/");
       }
+      
     }
     } catch (err) {
       console.error("Error:", err);
@@ -175,7 +178,7 @@ export const Login = ({setLoggedIn}) => {
   }
    
   return (
-    
+     <>
       <SigUpContainer>
         <MsgConatiner visible={isVisible} >
           {res}
@@ -242,6 +245,6 @@ export const Login = ({setLoggedIn}) => {
           </span>
         </StyledContainer>
       </SigUpContainer>
-    
+      </>
   );
 };
