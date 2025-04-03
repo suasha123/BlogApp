@@ -3,6 +3,7 @@ const User = require("../Model/userModel");
 const argon2 = require("argon2");
 const nodemailer = require('nodemailer');
 const otpStore = new Map();
+const jwt = require("jsonwebtoken");
 function validEmail(email){
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return emailRegex.test(email);
@@ -27,8 +28,13 @@ const userLogin = async (req, res) => {
       if (!isMatch) {
           return res.status(400).json({ msg: "Wrong Password" });
       }
-
-      return res.status(200).json({ msg: "User signed in"  , name : userExists.name , email : userExists.email});
+      const token = jwt.sign(
+        { id: userExists.id }, 
+        process.env.JWT_SECRET, 
+        { expiresIn: "1h" }
+      );
+      console.log(token);
+      return res.status(200).json({ token , msg: "User signed in"  , name : userExists.name , email : userExists.email});
 
   } catch (error) {
       console.error("Error in /login:", error);
@@ -103,4 +109,25 @@ const sendOtp = async(req , res) =>{
         }
   }
 
-  module.exports = {userLogin , userCreate,sendOtp};
+
+  const tokenverify = async (req,res)=>{
+        try{
+          const token = req.headers.authorization?.split(" ")[1];
+          if (!token) {
+            return res.status(401).json({ success: false, message: "Token required" });
+          }
+          const decoded = jwt.verify(token, process.env.JWT_SECRET);
+          const userId = decoded.id; 
+          const user = await User.findById(userId);
+          if(!user){
+            return res.status(404).json({ success: false, message: "User not found" });
+          }
+          res.status(200).json({ success: true, name : user.name , email : user.email });
+
+        }
+        catch(err){
+          res.status(401).json({ success: false, message: "Invalid or expired token" });
+        }
+        
+  }
+  module.exports = {userLogin , userCreate,sendOtp, tokenverify};

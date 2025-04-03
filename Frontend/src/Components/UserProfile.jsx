@@ -20,7 +20,7 @@ export const UserProfile = ({data})=>{
          <div style={{
             marginBottom : "5px",
             fontWeight : "600"
-         }}>{data.name || "surya"}</div>
+         }}>{data.name || "surya partap singh"}</div>
          <div style={{
             marginBottom : "10px",
              fontWeight : "600"
@@ -35,8 +35,10 @@ export const UserProfile = ({data})=>{
        <div style={{
         display : "flex",
         flexDirection : "row",
-        justifyContent : "center",
+        gap :"8px",
         alignItems : "center",
+        fontSize : "16px",
+        fontWeight : "600"
        }}>
        <CgProfile  style={{
         height : "20px",

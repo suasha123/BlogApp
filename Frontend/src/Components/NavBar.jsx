@@ -96,8 +96,6 @@ const ListLogo = styled(PiList)`
   }
 `;
 
-
-
 const MsgConatiner = styled.div`
   width: 20%;
   height: 40px;
@@ -109,36 +107,39 @@ const MsgConatiner = styled.div`
   text-align: center;
   padding-top: 8px;
   border-radius: 5px;
-  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
-  transform: ${({ visible }) => (visible ? "translateX(0%)" : "translateX(100%)")};
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
+    rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
+    rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+  transform: ${({ visible }) =>
+    visible ? "translateX(0%)" : "translateX(100%)"};
   transition: transform 0.5s ease-in-out;
-  z-index : 10000;
-  @media(max-width : 763px){
+  z-index: 10000;
+  @media (max-width: 763px) {
     width: 40%;
   }
-  @media(max-width : 450px){
+  @media (max-width: 450px) {
     width: 55%;
   }
 `;
 const Line = styled.div`
-  position : absolute ;
-  height : 2px;
-  background-color : green;
-  bottom : 0px;
-  border-radius : 5px;
-  animation: ${({ visible }) => (visible ? "WidthDecrease 2s forwards" : "none")};
-  @keyframes WidthDecrease{
-    from{
-      width : 100%;
+  position: absolute;
+  height: 2px;
+  background-color: green;
+  bottom: 0px;
+  border-radius: 5px;
+  animation: ${({ visible }) =>
+    visible ? "WidthDecrease 2s forwards" : "none"};
+  @keyframes WidthDecrease {
+    from {
+      width: 100%;
     }
-    to{
-      width : 0%;
+    to {
+      width: 0%;
     }
   }
-
 `;
-export const NavBar = ({ LoggedIn,data}) => {
-  const [profile , setProfile] = useState(false);
+export const NavBar = ({ LoggedIn, data, setbuttonclicked, buttonclicked }) => {
+  const [profile, setProfile] = useState(false);
   const [open, isopen] = useState(false);
   const [clicked, setCliked] = useState(false);
   const [isVisible, setvisible] = useState(false);
@@ -151,7 +152,6 @@ export const NavBar = ({ LoggedIn,data}) => {
 
       return () => clearTimeout(timer);
     }
-    
   }, [LoggedIn]);
   const [isSerachVisible, setSearchVisible] = useState(
     window.innerWidth >= 547
@@ -186,15 +186,21 @@ export const NavBar = ({ LoggedIn,data}) => {
     return () => window.removeEventListener("resize", handlevisiblity);
   }, []);
 
+  useEffect(() => {
+    if (buttonclicked) {
+      setTimeout(() => setbuttonclicked(false), 3000);
+    }
+  }, [buttonclicked]);
+
   return (
     <>
       <Nav>
-      {LoggedIn &&
-      <MsgConatiner visible={isVisible}>
-        Login Successful
-        <Line visible={isVisible}/>
-      </MsgConatiner>
-      }
+        {buttonclicked && (
+          <MsgConatiner visible={isVisible}>
+            Login Successful
+            <Line visible={isVisible} />
+          </MsgConatiner>
+        )}
         <ListLogo onClick={() => setOpen(!open)} />
         <img src={img} alt="Blog Logo" />
         <Input
@@ -204,24 +210,24 @@ export const NavBar = ({ LoggedIn,data}) => {
           }}
         />
         <SearchIcon onClick={() => setCliked(!clicked)} />
-        {!LoggedIn && (
+        {LoggedIn && (
           <>
-          <img
-          onClick={()=> {setProfile(!profile)}}
-            style={{
-              width: "40px",
-              height: "40px",
-              position : "relative",
-              cursor : "pointer"
-            }}
-            src={portfolio}
-          />
-          {profile && (
-            <UserProfile data={data}/>
-          )}
+            <img
+              onClick={() => {
+                setProfile(!profile);
+              }}
+              style={{
+                width: "40px",
+                height: "40px",
+                position: "relative",
+                cursor: "pointer",
+              }}
+              src={portfolio}
+            />
+            {profile && <UserProfile data={data} />}
           </>
         )}
-        {LoggedIn && (
+        {!LoggedIn && (
           <LoginButton to="/login">
             <CiLogin style={{ fontSize: "20px", strokeWidth: "1.5" }} />
             Sign-In

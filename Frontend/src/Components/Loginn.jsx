@@ -129,7 +129,7 @@ const Line = styled.div`
 
 `;
 
-export const Login = ({setLoggedIn , setData}) => {
+export const Login = ({setLoggedIn , setData ,setbuttonclicked}) => {
   const navigate = useNavigate();
   const [userInfo, setuserInfo] = useState({ email: "", password: "" });
   const [res, setRes] = useState("");
@@ -163,8 +163,9 @@ export const Login = ({setLoggedIn , setData}) => {
       }
       else{
         if (res.ok) {
-          setData(body);
           setLoggedIn(true);
+          sessionStorage.setItem("token" , body.token);
+          setData(body);
           navigate("/");
       }
       
@@ -233,7 +234,7 @@ export const Login = ({setLoggedIn , setData}) => {
           </div>
           <Button
             style={{ fontSize: "14px", marginBottom: "13px" }}
-            onClick={() => { sendUserData(userInfo)}}
+            onClick={() => { sendUserData(userInfo) , setbuttonclicked(true)}}
           >
             Sign In
           </Button>

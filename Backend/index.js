@@ -24,10 +24,9 @@ app.use(express.static(path.join(__dirname, "../Frontend/dist")));
 app.get("*", (req, res) => {
   res.sendFile(path.resolve(__dirname, "../Frontend/dist", "index.html"));
 });
-app.get("/",(req,res)=>{
-  res.sendFile(path.resolve(__dirname, "../Frontend/dist", "index.html"));
-})
+
 app.use('/auth',authRoute);
+
 app.listen(PORT, () => {
   console.log(path.join(__dirname ));
   connectDb();
