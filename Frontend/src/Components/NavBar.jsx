@@ -18,6 +18,9 @@ const Nav = styled.nav`
   position: sticky;
   top: 0px;
   min-width: 288px;
+  @media (max-width: 383px) {
+   padding-right : 7px;
+  }
 `;
 
 const Input = styled.input`
@@ -138,7 +141,7 @@ const Line = styled.div`
     }
   }
 `;
-export const NavBar = ({ LoggedIn, data, setbuttonclicked, buttonclicked }) => {
+export const NavBar = ({ LoggedIn, data, setbuttonclicked, buttonclicked , setData , setLoggedIn}) => {
   const [profile, setProfile] = useState(false);
   const [open, isopen] = useState(false);
   const [clicked, setCliked] = useState(false);
@@ -224,7 +227,7 @@ export const NavBar = ({ LoggedIn, data, setbuttonclicked, buttonclicked }) => {
               }}
               src={portfolio}
             />
-            {profile && <UserProfile data={data} />}
+            {profile && <UserProfile data={data} setData={setData} setLoggedIn={setLoggedIn} />}
           </>
         )}
         {!LoggedIn && (

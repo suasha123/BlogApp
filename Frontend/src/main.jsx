@@ -3,8 +3,12 @@ import { createRoot } from "react-dom/client";
 import { NavBar } from "./Components/NavBar";
 import { Login } from "./Components/Loginn";
 import { Signup } from "./Components/Signup";
+import { Loader } from "./Components/Reusuable Component/Loader";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ProfileInfo } from "./Components/Profile";
+
 const App = () => {
+  const [loading , setLoading] = useState(true);
   const [data, setData] = useState({});
   const [buttonclicked , setbuttonclicked] = useState(false);
   const [LoggedIn, setLoggedIn] = useState(false);
@@ -25,6 +29,7 @@ const App = () => {
       const result = await res.json();
       console.log(result);
       if (res.ok) {
+        
         setLoggedIn(true);
         setData(result);
       } else {
@@ -40,8 +45,17 @@ const App = () => {
   useEffect(() => {
     verifytoken();
   }, []);
+  useEffect(() => {
+    const time = setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+  
+    return () => clearTimeout(time);
+  }, []); 
+  
   return (
     <StrictMode>
+    {loading ? (<Loader />):
       <Router>
         <Routes>
           <Route
@@ -51,10 +65,15 @@ const App = () => {
           <Route path="/sign-up" element={<Signup />} />
           <Route
             path="/"
-            element={<NavBar LoggedIn={LoggedIn} data={data} setbuttonclicked={setbuttonclicked} buttonclicked={buttonclicked}/>}
+            element={<NavBar setData={setData} setLoggedIn={setLoggedIn} LoggedIn={LoggedIn} data={data} setbuttonclicked={setbuttonclicked} buttonclicked={buttonclicked}/>}
+          />
+          <Route
+            path="/userprofile"
+            element={<ProfileInfo LoggedIn={LoggedIn}/>}
           />
         </Routes>
       </Router>
+    }
     </StrictMode>
   );
 };
