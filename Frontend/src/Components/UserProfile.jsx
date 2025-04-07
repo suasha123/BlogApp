@@ -4,6 +4,7 @@ import { FiLogOut } from "react-icons/fi";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 const UserData = styled.div`
+ min-width : 233px;
   position: absolute;
   right: 5px;
   top: 60px;

@@ -1,4 +1,5 @@
 const mongoose = require ('mongoose');
+const { type } = require('os');
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -12,11 +13,19 @@ const userSchema = new mongoose.Schema({
         lowercase: true,
         unique: true
     },
-    password: {  // ✅ FIXED: Removed `lowercase: true`
+    password: {  
         type: String,
         required: true,
         trim: true, 
         minLength: 8 
+    },
+    profilepic : {
+      type : String,
+      default : "uploads/default.png"
+    },
+    bio : {
+    type : String,
+    default : "Blogger"
     }
 });
 

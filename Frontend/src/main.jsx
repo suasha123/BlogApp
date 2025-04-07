@@ -10,6 +10,7 @@ import { ProfileInfo } from "./Components/Profile";
 const App = () => {
   const [loading , setLoading] = useState(true);
   const [data, setData] = useState({});
+  
   const [buttonclicked , setbuttonclicked] = useState(false);
   const [LoggedIn, setLoggedIn] = useState(false);
   const verifytoken = async () => {
@@ -29,9 +30,9 @@ const App = () => {
       const result = await res.json();
       console.log(result);
       if (res.ok) {
-        
         setLoggedIn(true);
         setData(result);
+        console.log(data);
       } else {
         console.log(result.message);
         sessionStorage.removeItem("token");
@@ -69,7 +70,7 @@ const App = () => {
           />
           <Route
             path="/userprofile"
-            element={<ProfileInfo LoggedIn={LoggedIn}/>}
+            element={<ProfileInfo data={data} LoggedIn={LoggedIn}/>}
           />
         </Routes>
       </Router>

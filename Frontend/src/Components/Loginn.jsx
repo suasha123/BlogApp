@@ -4,7 +4,6 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useEffect } from "react";
-import { UserProfile } from "./UserProfile";
 import { useNavigate } from "react-router-dom";
 const SigUpContainer = styled.div`
   position : relative;
@@ -166,6 +165,7 @@ export const Login = ({setLoggedIn , setData ,setbuttonclicked}) => {
           setLoggedIn(true);
           sessionStorage.setItem("token" , body.token);
           setData(body);
+         
           navigate("/");
       }
       

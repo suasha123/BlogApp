@@ -194,6 +194,10 @@ export const NavBar = ({ LoggedIn, data, setbuttonclicked, buttonclicked , setDa
       setTimeout(() => setbuttonclicked(false), 3000);
     }
   }, [buttonclicked]);
+  useEffect(()=>{
+    console.log(data);
+
+  },[data])
 
   return (
     <>
@@ -215,18 +219,28 @@ export const NavBar = ({ LoggedIn, data, setbuttonclicked, buttonclicked , setDa
         <SearchIcon onClick={() => setCliked(!clicked)} />
         {LoggedIn && (
           <>
-            <img
-              onClick={() => {
+          <div
+           onClick={() => {
                 setProfile(!profile);
               }}
               style={{
-                width: "40px",
-                height: "40px",
+                width: "50px",
+                height: "50px",
                 position: "relative",
                 cursor: "pointer",
+                borderRadius : "50%"
               }}
-              src={portfolio}
+          >
+          <img
+              src={data.pic ? `http://localhost:3000/${data.pic}` : portfolio}
+               style={{
+                width : "100%",
+                height : "100%",
+                objectFit : "cover",
+                borderRadius : "50%"
+               }}
             />
+          </div>
             {profile && <UserProfile data={data} setData={setData} setLoggedIn={setLoggedIn} />}
           </>
         )}

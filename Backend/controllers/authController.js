@@ -34,7 +34,7 @@ const userLogin = async (req, res) => {
         { expiresIn: "1h" }
       );
       console.log(token);
-      return res.status(200).json({ token , msg: "User signed in"  , name : userExists.name , email : userExists.email});
+      return res.status(200).json({ token , msg: "User signed in"  , name : userExists.name , email : userExists.email , id : userExists.id , pic : userExists.profilepic});
 
   } catch (error) {
       console.error("Error in /login:", error);
@@ -122,7 +122,7 @@ const sendOtp = async(req , res) =>{
           if(!user){
             return res.status(404).json({ success: false, message: "User not found" });
           }
-          res.status(200).json({ success: true, name : user.name , email : user.email });
+          res.status(200).json({ success: true, name : user.name , email : user.email , id : user.id , pic : user.profilepic , bio : user.bio});
 
         }
         catch(err){
