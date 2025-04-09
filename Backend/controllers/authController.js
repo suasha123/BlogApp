@@ -34,7 +34,7 @@ const userLogin = async (req, res) => {
         { expiresIn: "1h" }
       );
       console.log(token);
-      return res.status(200).json({ token , msg: "User signed in"  , name : userExists.name , email : userExists.email , id : userExists.id , pic : userExists.profilepic});
+      return res.status(200).json({ token , msg: "User signed in"  , name : userExists.name , email : userExists.email , id : userExists.id , pic : userExists.profilepic , bio : userExists.bio});
 
   } catch (error) {
       console.error("Error in /login:", error);

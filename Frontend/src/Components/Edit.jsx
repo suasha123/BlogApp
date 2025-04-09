@@ -185,6 +185,7 @@ export const EditModal = ({ data, onClose }) => {
             Choose File
           </label>
           <Input
+            accept="image/*"
             style={{ display: "none" }}
             type="file"
             id="fileUpload"

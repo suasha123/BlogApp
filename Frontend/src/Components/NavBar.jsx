@@ -4,10 +4,9 @@ import { CiLogin } from "react-icons/ci";
 import { IoIosSearch } from "react-icons/io";
 import { PiList } from "react-icons/pi";
 import { useEffect, useState } from "react";
-import { SlideBar } from "./SlidingBar";
-import { Sidebar } from "./Sidebar";
 import { Link } from "react-router-dom";
 import { UserProfile } from "./UserProfile";
+import { TopNav } from "./TopNavbar";
 import portfolio from "../assets/portfolio.png";
 const Nav = styled.nav`
   display: flex;
@@ -91,13 +90,7 @@ const SearchIcon = styled(IoIosSearch)`
     left: 10px;
   }
 `;
-const ListLogo = styled(PiList)`
-  cursor: pointer;
-  display: none;
-  @media (max-width: 787px) {
-    display: block;
-  }
-`;
+
 
 const MsgConatiner = styled.div`
   width: 20%;
@@ -145,41 +138,19 @@ export const NavBar = ({ LoggedIn, data, setbuttonclicked, buttonclicked , setDa
   const [profile, setProfile] = useState(false);
   const [open, isopen] = useState(false);
   const [clicked, setCliked] = useState(false);
-  const [isVisible, setvisible] = useState(false);
-  useEffect(() => {
-    if (LoggedIn) {
-      setvisible(true);
-      const timer = setTimeout(() => {
-        setvisible(false);
-      }, 2000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [LoggedIn]);
+ 
   const [isSerachVisible, setSearchVisible] = useState(
     window.innerWidth >= 547
   );
-  const [isSidebarVisible, setIsSidebarVisible] = useState(
-    window.innerWidth >= 768
-  );
+
   function getdisplay() {
     if (clicked) {
       return "block";
     }
     return "none";
   }
-  const setOpen = () => {
-    isopen(!open);
-  };
+  
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsSidebarVisible(window.innerWidth >= 787);
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   useEffect(() => {
     const handlevisiblity = () => {
@@ -208,7 +179,6 @@ export const NavBar = ({ LoggedIn, data, setbuttonclicked, buttonclicked , setDa
             <Line visible={isVisible} />
           </MsgConatiner>
         )}
-        <ListLogo onClick={() => setOpen(!open)} />
         <img src={img} alt="Blog Logo" />
         <Input
           placeholder="Search here..."
@@ -251,9 +221,7 @@ export const NavBar = ({ LoggedIn, data, setbuttonclicked, buttonclicked , setDa
           </LoginButton>
         )}
       </Nav>
-
-      {isSidebarVisible && <Sidebar />}
-      <SlideBar setOpen={setOpen} open={open} />
+     <TopNav />
     </>
   );
 };

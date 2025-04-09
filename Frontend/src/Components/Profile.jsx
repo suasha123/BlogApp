@@ -158,6 +158,7 @@ const EditPofile = styled.button`
 
 export const ProfileInfo = ({ LoggedIn, data }) => {
   const [openModal, setOpenModal] = useState(false);
+    console.log(data);
     if (!LoggedIn) {
         return <Navigate to="/sign-up" replace />;
     
