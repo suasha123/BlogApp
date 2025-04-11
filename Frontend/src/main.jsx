@@ -6,7 +6,7 @@ import { Signup } from "./Components/Signup";
 import { Loader } from "./Components/Reusuable Component/Loader";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ProfileInfo } from "./Components/Profile";
-
+import { BlogEditor } from "./Components/BlogEditor";
 const App = () => {
   const [loading , setLoading] = useState(true);
   const [data, setData] = useState({});
@@ -72,6 +72,10 @@ const App = () => {
             path="/userprofile"
             element={<ProfileInfo data={data} LoggedIn={LoggedIn}/>}
           />
+          <Route
+            path="/postcreate"
+            element ={<BlogEditor />}
+            />
         </Routes>
       </Router>
     }

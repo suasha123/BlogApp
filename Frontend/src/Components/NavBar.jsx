@@ -7,7 +7,9 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { UserProfile } from "./UserProfile";
 import { TopNav } from "./TopNavbar";
+import { Sidebar } from "./Sidebar";
 import portfolio from "../assets/portfolio.png";
+import { CreateBlog } from "./CreateButton";
 const Nav = styled.nav`
   display: flex;
   align-items: center;
@@ -17,6 +19,7 @@ const Nav = styled.nav`
   position: sticky;
   top: 0px;
   min-width: 288px;
+  z-index : 1000;
   @media (max-width: 383px) {
    padding-right : 7px;
   }
@@ -136,9 +139,9 @@ const Line = styled.div`
 `;
 export const NavBar = ({ LoggedIn, data, setbuttonclicked, buttonclicked , setData , setLoggedIn}) => {
   const [profile, setProfile] = useState(false);
-  const [open, isopen] = useState(false);
   const [clicked, setCliked] = useState(false);
- 
+  const [isVisible, setvisible] = useState(false);
+  const [isopen , setopen] = useState(false);
   const [isSerachVisible, setSearchVisible] = useState(
     window.innerWidth >= 547
   );
@@ -149,8 +152,11 @@ export const NavBar = ({ LoggedIn, data, setbuttonclicked, buttonclicked , setDa
     }
     return "none";
   }
-  
-
+  useEffect(()=>{
+    if(isVisible){
+      setTimeout(() => setvisible(false), 2000);
+    }
+  },[isVisible]);
 
   useEffect(() => {
     const handlevisiblity = () => {
@@ -167,7 +173,7 @@ export const NavBar = ({ LoggedIn, data, setbuttonclicked, buttonclicked , setDa
   }, [buttonclicked]);
   useEffect(()=>{
     console.log(data);
-
+     setvisible(true);
   },[data])
 
   return (
@@ -179,6 +185,7 @@ export const NavBar = ({ LoggedIn, data, setbuttonclicked, buttonclicked , setDa
             <Line visible={isVisible} />
           </MsgConatiner>
         )}
+        {!isSerachVisible && (<PiList  onClick={()=>{setopen(true)}} />)}
         <img src={img} alt="Blog Logo" />
         <Input
           placeholder="Search here..."
@@ -221,7 +228,9 @@ export const NavBar = ({ LoggedIn, data, setbuttonclicked, buttonclicked , setDa
           </LoginButton>
         )}
       </Nav>
-     <TopNav />
+      {isSerachVisible && <TopNav />}
+       {!isSerachVisible && isopen && (<Sidebar  setopen ={setopen} isopen={isopen}/>)} 
+       <CreateBlog />
     </>
   );
 };

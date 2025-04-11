@@ -14,6 +14,7 @@ const UserData = styled.div`
   padding: 15px;
   font-family: Nunito;
   font-size: 14px;
+  z-index : 3000;
 `;
 
 export const UserProfile = ({ data, setData, setLoggedIn }) => {
