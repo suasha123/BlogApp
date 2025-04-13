@@ -1,4 +1,4 @@
-const path = require('path');
+
 const User = require("../Model/userModel");
 
 const uploadProfilePic = async (req, res) => {

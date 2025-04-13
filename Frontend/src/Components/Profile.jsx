@@ -222,7 +222,7 @@ export const ProfileInfo = ({ LoggedIn, data }) => {
                 <Type>
                     Posts
                 </Type>
-                <Number>0</Number>
+                <Number>{data.postcount}</Number>
             </div>
           </UserPostAndFolloq>
           </UserInnerDetails>

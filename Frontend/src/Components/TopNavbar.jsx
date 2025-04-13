@@ -5,7 +5,7 @@ import { useRef, useState, useEffect } from "react";
 
 const Wrapper = styled.div`
   position: relative;
-  width: 100vw;
+  width: 100%;
 `;
 
 const MainDiv = styled.div`

@@ -9,6 +9,7 @@ function validEmail(email){
     return emailRegex.test(email);
 }
 
+
 const transport = nodemailer.createTransport({
         service: "gmail",
         auth : {
@@ -34,7 +35,7 @@ const userLogin = async (req, res) => {
         { expiresIn: "1h" }
       );
       console.log(token);
-      return res.status(200).json({ token , msg: "User signed in"  , name : userExists.name , email : userExists.email , id : userExists.id , pic : userExists.profilepic , bio : userExists.bio});
+      return res.status(200).json({ token , msg: "User signed in"  , name : userExists.name , email : userExists.email , id : userExists.id , pic : userExists.profilepic , bio : userExists.bio , postcount : userExists.postCount});
 
   } catch (error) {
       console.error("Error in /login:", error);
@@ -122,7 +123,7 @@ const sendOtp = async(req , res) =>{
           if(!user){
             return res.status(404).json({ success: false, message: "User not found" });
           }
-          res.status(200).json({ success: true, name : user.name , email : user.email , id : user.id , pic : user.profilepic , bio : user.bio});
+          res.status(200).json({ success: true, name : user.name , email : user.email , id : user.id , pic : user.profilepic , bio : user.bio , postcount : user.postCount});
 
         }
         catch(err){

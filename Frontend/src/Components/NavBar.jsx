@@ -10,21 +10,22 @@ import { TopNav } from "./TopNavbar";
 import { Sidebar } from "./Sidebar";
 import portfolio from "../assets/portfolio.png";
 import { CreateBlog } from "./CreateButton";
+import { ContentCard } from "./ContentCards";
 const Nav = styled.nav`
-  display: flex;
+ 
+`;
+const Div = styled.div`
+ display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 18px 25px;
   border: 1px solid #e7e9ed;
-  position: sticky;
-  top: 0px;
   min-width: 288px;
   z-index : 1000;
   @media (max-width: 383px) {
    padding-right : 7px;
   }
 `;
-
 const Input = styled.input`
   background-color: #f9fafb;
   border-radius: 20px;
@@ -138,6 +139,7 @@ const Line = styled.div`
   }
 `;
 export const NavBar = ({ LoggedIn, data, setbuttonclicked, buttonclicked , setData , setLoggedIn}) => {
+
   const [profile, setProfile] = useState(false);
   const [clicked, setCliked] = useState(false);
   const [isVisible, setvisible] = useState(false);
@@ -179,6 +181,7 @@ export const NavBar = ({ LoggedIn, data, setbuttonclicked, buttonclicked , setDa
   return (
     <>
       <Nav>
+      <Div>
         {buttonclicked && (
           <MsgConatiner visible={isVisible}>
             Login Successful
@@ -227,10 +230,13 @@ export const NavBar = ({ LoggedIn, data, setbuttonclicked, buttonclicked , setDa
             Sign-In
           </LoginButton>
         )}
-      </Nav>
-      {isSerachVisible && <TopNav />}
+        </Div>
+        {isSerachVisible && <TopNav />}
+        <ContentCard />
+        </Nav>
        {!isSerachVisible && isopen && (<Sidebar  setopen ={setopen} isopen={isopen}/>)} 
-       <CreateBlog />
+       {LoggedIn&&(   <CreateBlog />)}
+       
     </>
   );
 };

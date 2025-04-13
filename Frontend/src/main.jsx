@@ -1,6 +1,7 @@
 import { StrictMode, useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { NavBar } from "./Components/NavBar";
+import { Error } from "./Components/Error";
 import { Login } from "./Components/Loginn";
 import { Signup } from "./Components/Signup";
 import { Loader } from "./Components/Reusuable Component/Loader";
@@ -10,7 +11,6 @@ import { BlogEditor } from "./Components/BlogEditor";
 const App = () => {
   const [loading , setLoading] = useState(true);
   const [data, setData] = useState({});
-  
   const [buttonclicked , setbuttonclicked] = useState(false);
   const [LoggedIn, setLoggedIn] = useState(false);
   const verifytoken = async () => {
@@ -74,7 +74,11 @@ const App = () => {
           />
           <Route
             path="/postcreate"
-            element ={<BlogEditor />}
+            element ={<BlogEditor LoggedIn={LoggedIn} data={data}  />}
+            />
+            <Route 
+              path="*"
+              element={<Error />}
             />
         </Routes>
       </Router>

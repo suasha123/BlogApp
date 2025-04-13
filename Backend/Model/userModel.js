@@ -26,6 +26,10 @@ const userSchema = new mongoose.Schema({
     bio : {
     type : String,
     default : "Blogger"
+    },
+    postCount : {
+        type : Number,
+        default : 0
     }
 });
 

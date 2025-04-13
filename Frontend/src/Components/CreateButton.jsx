@@ -1,5 +1,6 @@
 import styled from "styled-components"
 import { MdCreate } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 const CreateButton = styled.button`
   position : fixed;
   bottom :70px;
@@ -34,8 +35,9 @@ const CreateButton = styled.button`
 
 
 export const CreateBlog = ()=>{
+  const navigate = useNavigate();
     return (
-        <CreateButton>
+        <CreateButton onClick={() => navigate("/postcreate")}>
         <MdCreate  style={{fontSize :"20px"}}/>
             Create Blog
         </CreateButton>

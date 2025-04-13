@@ -7,15 +7,34 @@ const path = require("path");
 const authRoute = require('./Router/auth');
 const uploadRoute = require('./Router/upload');
 const BioRouter = require('./Router/bio');
+const PostModel = require('./Model/Post');
 dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
+
 app.use(cors({
   origin:  "http://localhost:5173",
   credentials: true,
 }))
+
 const PORT = process.env.PORT;
+app.get('/allposts', async (req, res) => {
+  try {
+    // Retrieve all posts and populate the 'author' field
+    const posts = await PostModel.find().populate('author');
+    
+    // Log the posts for debugging (you can remove this in production)
+    console.log(posts);
+
+    // Send the posts as a JSON response
+    res.status(200).json({ posts });  // Send the posts array
+  } catch (err) {
+    console.log(err);
+    // Send an error message in case of failure
+    res.status(500).json({ msg: "Error fetching posts" });
+  }
+});
 app.use(express.static(path.join(__dirname, "../Frontend/dist")));
 app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 app.get("*", (req, res) => {
@@ -24,6 +43,8 @@ app.get("*", (req, res) => {
 app.use('/auth',authRoute);
 app.use('/uploadpic',uploadRoute);
 app.use('/changebio',BioRouter);
+
+
 app.listen(PORT, () => {
   console.log(path.join(__dirname ));
   connectDb();
