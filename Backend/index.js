@@ -21,17 +21,14 @@ app.use(cors({
 const PORT = process.env.PORT;
 app.get('/allposts', async (req, res) => {
   try {
-    // Retrieve all posts and populate the 'author' field
-    const posts = await PostModel.find().populate('author');
     
-    // Log the posts for debugging (you can remove this in production)
+    const posts = await PostModel.find().populate('author');
     console.log(posts);
 
-    // Send the posts as a JSON response
-    res.status(200).json({ posts });  // Send the posts array
+    res.status(200).json({ posts });  
   } catch (err) {
     console.log(err);
-    // Send an error message in case of failure
+    
     res.status(500).json({ msg: "Error fetching posts" });
   }
 });

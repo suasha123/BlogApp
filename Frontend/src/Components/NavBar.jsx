@@ -11,6 +11,7 @@ import { Sidebar } from "./Sidebar";
 import portfolio from "../assets/portfolio.png";
 import { CreateBlog } from "./CreateButton";
 import { ContentCard } from "./ContentCards";
+import { AppFooter } from "./Footer";
 const Nav = styled.nav`
  
 `;
@@ -233,6 +234,7 @@ export const NavBar = ({ LoggedIn, data, setbuttonclicked, buttonclicked , setDa
         </Div>
         {isSerachVisible && <TopNav />}
         <ContentCard />
+        <AppFooter />
         </Nav>
        {!isSerachVisible && isopen && (<Sidebar  setopen ={setopen} isopen={isopen}/>)} 
        {LoggedIn&&(   <CreateBlog />)}

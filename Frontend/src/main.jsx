@@ -49,7 +49,7 @@ const App = () => {
   useEffect(() => {
     const time = setTimeout(() => {
       setLoading(false);
-    }, 3000);
+    }, 1000);
   
     return () => clearTimeout(time);
   }, []); 
