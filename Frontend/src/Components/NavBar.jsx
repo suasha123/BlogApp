@@ -13,18 +13,26 @@ import { CreateBlog } from "./CreateButton";
 import { ContentCard } from "./ContentCards";
 import { AppFooter } from "./Footer";
 const Nav = styled.nav`
- 
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 `;
+
+const MainContent = styled.div`
+  flex: 1;
+  background-color: #f8f8ff;
+`;
+
 const Div = styled.div`
- display: flex;
+  display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 18px 25px;
   border: 1px solid #e7e9ed;
   min-width: 288px;
-  z-index : 1000;
+  z-index: 1000;
   @media (max-width: 383px) {
-   padding-right : 7px;
+    padding-right: 7px;
   }
 `;
 const Input = styled.input`
@@ -96,7 +104,6 @@ const SearchIcon = styled(IoIosSearch)`
   }
 `;
 
-
 const MsgConatiner = styled.div`
   width: 20%;
   height: 40px;
@@ -139,12 +146,18 @@ const Line = styled.div`
     }
   }
 `;
-export const NavBar = ({ LoggedIn, data, setbuttonclicked, buttonclicked , setData , setLoggedIn}) => {
-
+export const NavBar = ({
+  LoggedIn,
+  data,
+  setbuttonclicked,
+  buttonclicked,
+  setData,
+  setLoggedIn,
+}) => {
   const [profile, setProfile] = useState(false);
   const [clicked, setCliked] = useState(false);
   const [isVisible, setvisible] = useState(false);
-  const [isopen , setopen] = useState(false);
+  const [isopen, setopen] = useState(false);
   const [isSerachVisible, setSearchVisible] = useState(
     window.innerWidth >= 547
   );
@@ -155,11 +168,11 @@ export const NavBar = ({ LoggedIn, data, setbuttonclicked, buttonclicked , setDa
     }
     return "none";
   }
-  useEffect(()=>{
-    if(isVisible){
+  useEffect(() => {
+    if (isVisible) {
       setTimeout(() => setvisible(false), 2000);
     }
-  },[isVisible]);
+  }, [isVisible]);
 
   useEffect(() => {
     const handlevisiblity = () => {
@@ -174,71 +187,86 @@ export const NavBar = ({ LoggedIn, data, setbuttonclicked, buttonclicked , setDa
       setTimeout(() => setbuttonclicked(false), 3000);
     }
   }, [buttonclicked]);
-  useEffect(()=>{
+  useEffect(() => {
     console.log(data);
-     setvisible(true);
-  },[data])
+    setvisible(true);
+  }, [data]);
 
   return (
     <>
       <Nav>
-      <Div>
-        {buttonclicked && (
-          <MsgConatiner visible={isVisible}>
-            Login Successful
-            <Line visible={isVisible} />
-          </MsgConatiner>
-        )}
-        {!isSerachVisible && (<PiList  onClick={()=>{setopen(true)}} />)}
-        <img src={img} alt="Blog Logo" />
-        <Input
-          placeholder="Search here..."
-          style={{
-            display: isSerachVisible ? "block" : getdisplay(),
-          }}
-        />
-        <SearchIcon onClick={() => setCliked(!clicked)} />
-        {LoggedIn && (
-          <>
-          <div
-           onClick={() => {
-                setProfile(!profile);
+        <Div>
+          {buttonclicked && (
+            <MsgConatiner visible={isVisible}>
+              Login Successful
+              <Line visible={isVisible} />
+            </MsgConatiner>
+          )}
+          {!isSerachVisible && (
+            <PiList
+              onClick={() => {
+                setopen(true);
               }}
-              style={{
-                width: "50px",
-                height: "50px",
-                position: "relative",
-                cursor: "pointer",
-                borderRadius : "50%"
-              }}
-          >
-          <img
-              src={data.pic ? `http://localhost:3000/${data.pic}` : portfolio}
-               style={{
-                width : "100%",
-                height : "100%",
-                objectFit : "cover",
-                borderRadius : "50%"
-               }}
             />
-          </div>
-            {profile && <UserProfile data={data} setData={setData} setLoggedIn={setLoggedIn} />}
-          </>
-        )}
-        {!LoggedIn && (
-          <LoginButton to="/login">
-            <CiLogin style={{ fontSize: "20px", strokeWidth: "1.5" }} />
-            Sign-In
-          </LoginButton>
-        )}
+          )}
+          <img src={img} alt="Blog Logo" />
+          <Input
+            placeholder="Search here..."
+            style={{
+              display: isSerachVisible ? "block" : getdisplay(),
+            }}
+          />
+          <SearchIcon onClick={() => setCliked(!clicked)} />
+          {LoggedIn ? (
+            <>
+              <div
+                onClick={() => setProfile(!profile)}
+                style={{
+                  width: "50px",
+                  height: "50px",
+                  position: "relative",
+                  cursor: "pointer",
+                  borderRadius: "50%",
+                }}
+              >
+                <img
+                  src={
+                    data.pic ? `http://localhost:3000/${data.pic}` : portfolio
+                  }
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    borderRadius: "50%",
+                  }}
+                />
+              </div>
+              {profile && (
+                <UserProfile
+                  data={data}
+                  setData={setData}
+                  setLoggedIn={setLoggedIn}
+                />
+              )}
+            </>
+          ) : (
+            <LoginButton to="/login">
+              <CiLogin style={{ fontSize: "20px", strokeWidth: "1.5" }} />
+              Sign-In
+            </LoginButton>
+          )}
         </Div>
         {isSerachVisible && <TopNav />}
+        <MainContent>
         <ContentCard />
-        <AppFooter />
-        </Nav>
-       {!isSerachVisible && isopen && (<Sidebar  setopen ={setopen} isopen={isopen}/>)} 
-       {LoggedIn&&(   <CreateBlog />)}
-       
+        </MainContent>
+       <AppFooter />
+      </Nav>
+
+      {!isSerachVisible && isopen && (
+        <Sidebar setopen={setopen} isopen={isopen} />
+      )}
+      {LoggedIn && <CreateBlog />}
     </>
   );
 };

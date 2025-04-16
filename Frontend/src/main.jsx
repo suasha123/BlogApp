@@ -28,18 +28,15 @@ const App = () => {
         },
       });
       const result = await res.json();
-      console.log(result);
       if (res.ok) {
         setLoggedIn(true);
         setData(result);
-        console.log(data);
       } else {
         console.log(result.message);
         sessionStorage.removeItem("token");
         setLoggedIn(false);
       }
     } catch (err) {
-      console.log(err);
       setLoggedIn(false);
     }
   };
@@ -67,6 +64,10 @@ const App = () => {
           <Route
             path="/"
             element={<NavBar setData={setData} setLoggedIn={setLoggedIn} LoggedIn={LoggedIn} data={data} setbuttonclicked={setbuttonclicked} buttonclicked={buttonclicked}/>}
+          />
+           <Route
+            path="/userprofile/:id"
+            element={<ProfileInfo data={data} LoggedIn={LoggedIn}/>}
           />
           <Route
             path="/userprofile"

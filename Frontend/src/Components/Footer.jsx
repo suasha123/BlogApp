@@ -6,7 +6,7 @@ const Footer = styled.footer`
   font-family: 'Nunito', sans-serif;
   padding: 2rem 1rem;
   text-align: center;
-  height : 140px;
+  height : 150px;
 `;
 
 const FooterContainer = styled.div`
