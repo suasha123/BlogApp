@@ -158,10 +158,13 @@ export const NavBar = ({
   const [clicked, setCliked] = useState(false);
   const [isVisible, setvisible] = useState(false);
   const [isopen, setopen] = useState(false);
+  const [category , setCategory] = useState(null);
   const [isSerachVisible, setSearchVisible] = useState(
     window.innerWidth >= 547
   );
-
+  const handleCategory = (choice)=>{
+    setCategory(choice);
+  }
   function getdisplay() {
     if (clicked) {
       return "block";
@@ -256,9 +259,9 @@ export const NavBar = ({
             </LoginButton>
           )}
         </Div>
-        {isSerachVisible && <TopNav />}
+        {isSerachVisible && <TopNav handleCategory={handleCategory}/>}
         <MainContent>
-        <ContentCard />
+        <ContentCard category={category}/>
         </MainContent>
        <AppFooter />
       </Nav>

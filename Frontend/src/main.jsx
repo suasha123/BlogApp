@@ -39,18 +39,13 @@ const App = () => {
     } catch (err) {
       setLoggedIn(false);
     }
+    finally{
+      setLoading(false);
+    }
   };
   useEffect(() => {
     verifytoken();
-  }, []);
-  useEffect(() => {
-    const time = setTimeout(() => {
-      setLoading(false);
-    }, 1000);
-  
-    return () => clearTimeout(time);
   }, []); 
-  
   return (
     <StrictMode>
     {loading ? (<Loader />):

@@ -1,6 +1,9 @@
 import styled from "styled-components";
 import { IoHomeOutline } from "react-icons/io5";
-import { IoIosArrowDropleftCircle, IoIosArrowDroprightCircle } from "react-icons/io";
+import {
+  IoIosArrowDropleftCircle,
+  IoIosArrowDroprightCircle,
+} from "react-icons/io";
 import { useRef, useState, useEffect } from "react";
 
 const Wrapper = styled.div`
@@ -113,7 +116,7 @@ const ArrowRight = styled(IoIosArrowDroprightCircle)`
   transition: opacity 0.3s ease;
 `;
 
-export const TopNav = () => {
+export const TopNav = ({handleCategory}) => {
   const scrollRef = useRef();
   const [showLeft, setShowLeft] = useState(false);
   const [showRight, setShowRight] = useState(false);
@@ -122,7 +125,9 @@ export const TopNav = () => {
     const scrollEl = scrollRef.current;
     if (!scrollEl) return;
     setShowLeft(scrollEl.scrollLeft > 10);
-    setShowRight(scrollEl.scrollLeft + scrollEl.clientWidth < scrollEl.scrollWidth - 10);
+    setShowRight(
+      scrollEl.scrollLeft + scrollEl.clientWidth < scrollEl.scrollWidth - 10
+    );
   };
 
   const scroll = (offset) => {
@@ -164,7 +169,15 @@ export const TopNav = () => {
           Home
         </HomeButton>
         {items.map((item, index) => (
-          <Item href="#" key={index}>
+          <Item
+            href="#"
+            key={index}
+            onClick={(e) => {
+              e.preventDefault();
+              console.log(item);
+              handleCategory(item);
+            }}
+          >
             {item}
           </Item>
         ))}

@@ -1,10 +1,13 @@
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Navigate, useParams } from "react-router-dom";
 import portfolio from "../assets/portfolio.png";
 import styled from "styled-components";
 import { EditModal } from "./Edit";
 import { ContentCard } from "./ContentCards";
 import { AppFooter } from "./Footer";
+import { useNavigate } from "react-router-dom";
+import { Skeleton } from "@mui/material";
+import { Loader } from "./Reusuable Component/Loader";
 const PageWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -163,12 +166,13 @@ const EditPofile = styled.button`
 `;
 
 export const ProfileInfo = ({ LoggedIn, data }) => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const finalid = id || data.id;
   const [openModal, setOpenModal] = useState(false);
   const [profiledata, setProfiledata] = useState({});
-  
   const [followingState, setFollowingState] = useState(false);
+  const [loading , setLoading] = useState(true);
   const handletoggle = async()=>{
      const newstate = !followingState;
      setFollowingState(newstate);
@@ -208,18 +212,43 @@ export const ProfileInfo = ({ LoggedIn, data }) => {
         });
         
       } else {
-        console.log("Failed to fetch profile:", result.msg);
+        navigate("*", { replace: true });
       }
     } catch (err) {
       console.log("Error fetching profile:", err);
     }
   };
+  const getfollowingStatus = async()=>{
+    try{
+      const res =  await fetch(`/getfollowingstatus/?followerid=${data.id}&followeeId=${finalid}`);
+      const result = await res.json();
+      if(res.ok){
+        setFollowingState(result.isFollowing);
+      }
+      else{
+        console.log(result.msg);
+      }
+    }
+    catch(err){
+      console.log(err);
+    }
+  }
   useEffect(() => {
     fetchUserProfile();
-  }, [finalid]);
-
+    if(id){
+      getfollowingStatus();
+    }
+  }, []);
+   useEffect(()=>{
+      const timer = setTimeout(()=>{
+        setLoading(false);
+      },5000);
+      return ()=> clearTimeout(timer);
+   },[])
   return (
-    <PageWrapper>
+    <>
+    {loading && <Loader />}
+    <PageWrapper style={{display : loading ? "none" : "block"}}>
     {openModal && !id && (
       <EditModal data={data} onClose={() => setOpenModal(false)} />
     )}
@@ -241,6 +270,7 @@ export const ProfileInfo = ({ LoggedIn, data }) => {
     {/* Profile Section */}
     <UserDetailsinnerDiv>
       <Imagediv>
+      { profiledata.profilepic ? 
         <Image
           src={
             profiledata.profilepic
@@ -248,11 +278,13 @@ export const ProfileInfo = ({ LoggedIn, data }) => {
               : portfolio
           }
         />
+        : <Skeleton variant="circular" width={70} height={70} />
+      }
       </Imagediv>
       <UserInnerDetails>
         <UserInfo>
-          <Name>{profiledata.name || "Surya Pratap Singh DHiwara "}</Name>
-          <Description>{profiledata.bio}</Description>
+          <Name>{profiledata.name ?  profiledata.name : <Skeleton variant="rectangular" width={210} height={60} />}</Name>
+          <Description>{profiledata.bio ? profiledata.bio : <Skeleton variant="text" sx={{ fontSize: '1rem' }} />}</Description>
           <div>
             <span style={{ color: "#8787ed" }}>Joined : </span>10/02/2005
           </div>
@@ -279,30 +311,38 @@ export const ProfileInfo = ({ LoggedIn, data }) => {
         </UserInfo>
   
         <UserPostAndFolloq>
+        {profiledata.followersCount || profiledata.followersCount===0  ? (
           <div style={{ display: "flex", flexDirection: "column" }}>
             <Type>Followers</Type>
             <Number>{profiledata.followersCount}</Number>
           </div>
+          ) :  <Skeleton variant="rectangular" width={80} height={50} />
+        }
+        {profiledata.followingCount || profiledata.followingCount===0 ? (
           <div style={{ display: "flex", flexDirection: "column" }}>
             <Type>Following</Type>
             <Number>{profiledata.followingCount}</Number>
           </div>
+        ) :  <Skeleton variant="rectangular" width={80} height={50} />
+        }
+        {profiledata.postCount ||  profiledata.postCount === 0 ? (
           <div style={{ display: "flex", flexDirection: "column" }}>
             <Type>Posts</Type>
             <Number>{profiledata.postCount}</Number>
-          </div>
+          </div>) :  <Skeleton variant="rectangular" width={80} height={50} />
+          }
         </UserPostAndFolloq>
       </UserInnerDetails>
     </UserDetailsinnerDiv>
-  
+    
     {/* Middle content that grows */}
     <MainContent style={{backgroundColor : " #f8f8ff"}}>
-      <ContentCard finalid={data.id} />
+      <ContentCard finalid={finalid } />
     </MainContent>
   
     {/* Sticky footer */}
     <AppFooter />
   </PageWrapper>
-  
+  </>
   );
 };

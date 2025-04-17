@@ -9,6 +9,7 @@ const uploadRoute = require('./Router/upload');
 const BioRouter = require('./Router/bio');
 const PostModel = require('./Model/Post');
 const User = require('./Model/userModel');
+const mongoose = require('mongoose')
 dotenv.config();
 const app = express();
 app.use(express.json());
@@ -20,6 +21,17 @@ app.use(cors({
 }))
 
 const PORT = process.env.PORT;
+app.get('/getfollowingstatus' , async(req,res)=>{
+   const {followerid , followeeId} = req.query;
+   try{
+    const Userserach = await User.findById(followerid);
+    const isFollowing = Userserach.following.includes(followeeId);
+    return res.status(200).json({isFollowing});
+   }
+   catch(err){
+    return res.status(500).json({msg : "Not able to fetch details"});
+   }
+})
 app.put('/updatefollower', async (req, res) => {
   const { followerid , followeeId, update } = req.query;
 
@@ -52,16 +64,30 @@ app.get('/userprofile/info/:userid', async (req, res) => {
 });
 app.get('/allposts', async (req, res) => {
   try {
-    const { userid } = req.query;
+    const { userid ,c} = req.query;
 
     let posts;
+    if(c){
+      posts = await PostModel.find({category : c}).populate('author');
+      
+      if(!posts){
+        return res.status(400).json({msg : "Error fetching Posts"});
+      }
+      return  res.status(200).json({ posts });
+    }
     if (!userid) {
       posts = await PostModel.find().populate('author');
+      if(!posts){
+        return res.status(400).json({msg : "Error fetching Posts"});
+      }
+      return  res.status(200).json({ posts });
     } else {
       posts = await PostModel.find({ author: userid }).populate('author');
+      if(!posts){
+        return res.status(400).json({msg : "Error fetching Posts"});
+      }
+      return  res.status(200).json({ posts });
     }
-
-    res.status(200).json({ posts });
   } catch (err) {
     console.log(err);
     res.status(500).json({ msg: "Error fetching posts" });
