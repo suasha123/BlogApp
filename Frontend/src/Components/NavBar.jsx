@@ -12,6 +12,7 @@ import portfolio from "../assets/portfolio.png";
 import { CreateBlog } from "./CreateButton";
 import { ContentCard } from "./ContentCards";
 import { AppFooter } from "./Footer";
+import { useSearchParams } from 'react-router-dom';
 const Nav = styled.nav`
   display: flex;
   flex-direction: column;
@@ -158,13 +159,18 @@ export const NavBar = ({
   const [clicked, setCliked] = useState(false);
   const [isVisible, setvisible] = useState(false);
   const [isopen, setopen] = useState(false);
-  const [category , setCategory] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
   const [isSerachVisible, setSearchVisible] = useState(
     window.innerWidth >= 547
   );
-  const handleCategory = (choice)=>{
-    setCategory(choice);
-  }
+  const handleSetCategory = (category) => {
+    if (!category || category === 'allposts') {
+      setSearchParams({});
+    } else {
+      setSearchParams({ category });
+    }
+  };
+  const selectedCategory = searchParams.get('category') || 'allposts';
   function getdisplay() {
     if (clicked) {
       return "block";
@@ -259,9 +265,9 @@ export const NavBar = ({
             </LoginButton>
           )}
         </Div>
-        {isSerachVisible && <TopNav handleCategory={handleCategory}/>}
+        {isSerachVisible && <TopNav handleCategory={handleSetCategory} selectedCategory={selectedCategory}/>}
         <MainContent>
-        <ContentCard category={category}/>
+        <ContentCard selectedCategory={selectedCategory}/>
         </MainContent>
        <AppFooter />
       </Nav>

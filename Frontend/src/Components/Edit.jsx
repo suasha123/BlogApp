@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled, { keyframes } from "styled-components";
-
+import { Overlayy } from "./Reusuable Component/Overaly";
 const fadeIn = keyframes`
   from {
     opacity: 0;
@@ -10,21 +10,6 @@ const fadeIn = keyframes`
     opacity: 1;
     transform: scale(1);
   }
-`;
-
-const Overlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: 100vw;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  min-width : 233px;
-  overflow-x: auto;
 `;
 
 const ModalContent = styled.div`
@@ -164,7 +149,7 @@ export const EditModal = ({ data, onClose }) => {
   };
 
   return (
-    <Overlay>
+    <Overlayy>
       <ModalContent>
         <CloseBtn onClick={onClose}>×</CloseBtn>
         <h2 style={{ fontFamily: "Nunito", marginBottom: "10px" }}>
@@ -204,6 +189,6 @@ export const EditModal = ({ data, onClose }) => {
           <Button type="submit">Submit</Button>
         </form>
       </ModalContent>
-    </Overlay>
+      </Overlayy>
   );
 };

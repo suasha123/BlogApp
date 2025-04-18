@@ -1,17 +1,22 @@
 import { Fragment, useEffect, useState } from "react";
-import { Navigate, useParams } from "react-router-dom";
+import { Navigate, useParams, useNavigate } from "react-router-dom";
 import portfolio from "../assets/portfolio.png";
 import styled from "styled-components";
 import { EditModal } from "./Edit";
 import { ContentCard } from "./ContentCards";
 import { AppFooter } from "./Footer";
-import { useNavigate } from "react-router-dom";
 import { Skeleton } from "@mui/material";
 import { Loader } from "./Reusuable Component/Loader";
+
 const PageWrapper = styled.div`
-  display: flex;
   flex-direction: column;
   min-height: 100vh;
+`;
+
+const ContentWrapper = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 `;
 
 const UserDetailsinnerDiv = styled.div`
@@ -21,13 +26,16 @@ const UserDetailsinnerDiv = styled.div`
   flex-direction: row;
   gap: 10px;
   background-color: #f8f8ff;
+
   @media (max-width: 1117px) {
     padding-left: 10px;
   }
+
   @media (max-width: 868px) {
     flex-wrap: wrap;
   }
 `;
+
 const Imagediv = styled.div`
   height: 180px;
   width: 180px;
@@ -42,15 +50,18 @@ const Imagediv = styled.div`
   border: 1px solid rgba(255, 255, 255, 0.3);
   position: relative;
   top: -30px;
+
   @media (max-width: 1097px) {
     height: 150px;
     width: 150px;
   }
+
   @media (max-width: 868px) {
     left: 40%;
     height: 100px;
     width: 100px;
   }
+
   @media (max-width: 400px) {
     left: 35%;
   }
@@ -63,35 +74,43 @@ const Image = styled.img`
   width: 90%;
   height: 90%;
 `;
+
 const UserInnerDetails = styled.div`
   padding: 30px;
   display: flex;
-  flexdirection: row;
+  flex-direction: row;
   gap: 250px;
   position: relative;
+
   @media (max-width: 1300px) {
     gap: 100px;
   }
+
   @media (max-width: 1117px) {
     padding: 15px;
   }
+
   @media (max-width: 968px) {
     gap: 20px;
   }
+
   @media (max-width: 868px) {
     width: 100%;
     justify-content: space-between;
     top: -40px;
   }
+
   @media (max-width: 531px) {
     flex-wrap: wrap;
     gap: 5px;
   }
 `;
+
 const UserInfo = styled.div`
   display: flex;
   flex-direction: column;
   max-width: 300px;
+
   @media (max-width: 531px) {
     width: 100%;
   }
@@ -102,32 +121,41 @@ const UserPostAndFolloq = styled.div`
   top: 20px;
   display: flex;
   gap: 120px;
+
   @media (max-width: 1018px) {
     gap: 70px;
     justify-content: space-evenly;
     padding-left: 30px;
   }
+
   @media (max-width: 868px) {
     gap: 30px;
   }
+
   @media (max-width: 627px) {
     padding-left: 0px;
   }
+
   @media (max-width: 531px) {
     width: 100%;
     justify-content: space-between;
   }
 `;
+
 const MainContent = styled.div`
+  min-height: 414px;
   flex: 1;
 `;
+
 const Name = styled.div`
   font-size: 20px;
   font-weight: 600;
+
   @media (max-width: 627px) {
     font-size: 18px;
   }
 `;
+
 const Description = styled.div`
   color: #555;
   margin-bottom: 3px;
@@ -135,10 +163,12 @@ const Description = styled.div`
 
 const Type = styled.div`
   font-size: 16px;
+
   @media (max-width: 627px) {
     font-size: 13px;
   }
 `;
+
 const Number = styled.span`
   font-weight: 600;
   font-size: 20px;
@@ -160,6 +190,7 @@ const EditPofile = styled.button`
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   transition: background-color 0.5s ease-in;
   cursor: pointer;
+
   &:hover {
     background-color: #c94b82;
   }
@@ -172,34 +203,33 @@ export const ProfileInfo = ({ LoggedIn, data }) => {
   const [openModal, setOpenModal] = useState(false);
   const [profiledata, setProfiledata] = useState({});
   const [followingState, setFollowingState] = useState(false);
-  const [loading , setLoading] = useState(true);
-  const handletoggle = async()=>{
-     const newstate = !followingState;
-     setFollowingState(newstate);
-     try{
-      const res = await fetch(`/updatefollower/?followerid=${data.id}&followeeId=${finalid}&update=${newstate ? 1 : -1}`,
+  const [loading, setLoading] = useState(true);
+
+  const handletoggle = async () => {
+    const newstate = !followingState;
+    setFollowingState(newstate);
+    try {
+      const res = await fetch(
+        `/updatefollower/?followerid=${data.id}&followeeId=${finalid}&update=${
+          newstate ? 1 : -1
+        }`,
         {
-         method : 'PUT',
-         headers: {
-         "Content-Type": "application/json",
-       },
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
       );
-      if(res.ok){
-        console.log("follower updated")
-      }
-      else{
-        console.log("follower not updated");
-      }
-     }
-     catch(err){
+      if (!res.ok) console.log("follower not updated");
+    } catch (err) {
       setFollowingState(!newstate);
-     }
-  }
- 
+    }
+  };
+
   if (!LoggedIn) {
     return <Navigate to="/sign-up" replace />;
   }
+
   const fetchUserProfile = async () => {
     try {
       const res = await fetch(`/userprofile/info/${finalid}`);
@@ -208,9 +238,8 @@ export const ProfileInfo = ({ LoggedIn, data }) => {
         setProfiledata({
           ...result.userinfo,
           followersCount: result.followerslength,
-          followingCount: result.followinglength
+          followingCount: result.followinglength,
         });
-        
       } else {
         navigate("*", { replace: true });
       }
@@ -218,131 +247,172 @@ export const ProfileInfo = ({ LoggedIn, data }) => {
       console.log("Error fetching profile:", err);
     }
   };
-  const getfollowingStatus = async()=>{
-    try{
-      const res =  await fetch(`/getfollowingstatus/?followerid=${data.id}&followeeId=${finalid}`);
+
+  const getfollowingStatus = async () => {
+    try {
+      const res = await fetch(
+        `/getfollowingstatus/?followerid=${data.id}&followeeId=${finalid}`
+      );
       const result = await res.json();
-      if(res.ok){
+      if (res.ok) {
         setFollowingState(result.isFollowing);
-      }
-      else{
+      } else {
         console.log(result.msg);
       }
-    }
-    catch(err){
+    } catch (err) {
       console.log(err);
     }
-  }
+  };
+
   useEffect(() => {
     fetchUserProfile();
-    if(id){
+    if (id) {
       getfollowingStatus();
     }
   }, []);
-   useEffect(()=>{
-      const timer = setTimeout(()=>{
-        setLoading(false);
-      },5000);
-      return ()=> clearTimeout(timer);
-   },[])
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <>
-    {loading && <Loader />}
-    <PageWrapper style={{display : loading ? "none" : "block"}}>
-    {openModal && !id && (
-      <EditModal data={data} onClose={() => setOpenModal(false)} />
-    )}
-  
-    {!id && (
-      <EditPofile onClick={() => setOpenModal(true)}>Edit Profile</EditPofile>
-    )}
-  
-    {/* Header Background */}
-    <div
-      style={{
-        height: "120px",
-        width: "100%",
-        background:
-          "linear-gradient(to right, #8e2a42, #a13684, #b93c83, #c94b82, #a153d2)",
-      }}
-    ></div>
-  
-    {/* Profile Section */}
-    <UserDetailsinnerDiv>
-      <Imagediv>
-      { profiledata.profilepic ? 
-        <Image
-          src={
-            profiledata.profilepic
-              ? `http://localhost:3000/${profiledata.profilepic}`
-              : portfolio
-          }
-        />
-        : <Skeleton variant="circular" width={70} height={70} />
-      }
-      </Imagediv>
-      <UserInnerDetails>
-        <UserInfo>
-          <Name>{profiledata.name ?  profiledata.name : <Skeleton variant="rectangular" width={210} height={60} />}</Name>
-          <Description>{profiledata.bio ? profiledata.bio : <Skeleton variant="text" sx={{ fontSize: '1rem' }} />}</Description>
-          <div>
-            <span style={{ color: "#8787ed" }}>Joined : </span>10/02/2005
+      {loading && <Loader />}
+      <PageWrapper style={{ display: loading ? "none" : "flex" }}>
+        {openModal && !id && (
+          <EditModal data={data} onClose={() => setOpenModal(false)} />
+        )}
+        {!id && (
+          <EditPofile onClick={() => setOpenModal(true)}>
+            Edit Profile
+          </EditPofile>
+        )}
+
+        {/* Header Background */}
+        <div
+          style={{
+            height: "100px",
+            width: "100%",
+            background:
+              "linear-gradient(to right, #8e2a42, #a13684, #b93c83, #c94b82, #a153d2)",
+          }}
+        ></div>
+
+        <ContentWrapper>
+          <UserDetailsinnerDiv>
+            <Imagediv>
+              {profiledata.profilepic ? (
+                <Image
+                  src={
+                    profiledata.profilepic
+                      ? `http://localhost:3000/${profiledata.profilepic}`
+                      : portfolio
+                  }
+                />
+              ) : (
+                <Skeleton variant="circular" width={70} height={70} />
+              )}
+            </Imagediv>
+
+            <UserInnerDetails>
+              <UserInfo>
+                <Name>
+                  {profiledata.name ? (
+                    profiledata.name
+                  ) : (
+                    <Skeleton variant="rectangular" width={210} height={60} />
+                  )}
+                </Name>
+                <Description>
+                  {profiledata.bio ? (
+                    profiledata.bio
+                  ) : (
+                    <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+                  )}
+                </Description>
+                <div>
+                  <span style={{ color: "#8787ed" }}>Joined : </span>10/02/2005
+                </div>
+                {id && (
+                  <button
+                    onClick={() => handletoggle()}
+                    style={{
+                      width: "120px",
+                      height: "30px",
+                      backgroundColor: followingState ? "#a153d2" : "#a13684",
+                      cursor: "pointer",
+                      transition: "all 0.5s ease",
+                      color: "white",
+                      fontFamily: "Nunito",
+                      borderRadius: "5px",
+                      border: "none",
+                      marginTop: "9px",
+                      fontSize: "16px",
+                    }}
+                  >
+                    {followingState ? "Unfollow" : "Follow"}
+                  </button>
+                )}
+              </UserInfo>
+
+              <UserPostAndFolloq>
+                {profiledata.followersCount ||
+                profiledata.followersCount === 0 ? (
+                  <div style={{ display: "flex", flexDirection: "column" , cursor: "pointer" }}>
+                    <Type>Followers</Type>
+                    <Number>{profiledata.followersCount}</Number>
+                  </div>
+                ) : (
+                  <Skeleton variant="rectangular" width={80} height={50} />
+                )}
+
+                {profiledata.followingCount ||
+                profiledata.followingCount === 0 ? (
+                  <div style={{ display: "flex", flexDirection: "column" ,cursor: "pointer" }}>
+                    <Type>Following</Type>
+                    <Number>{profiledata.followingCount}</Number>
+                  </div>
+                ) : (
+                  <Skeleton variant="rectangular" width={80} height={50} />
+                )}
+
+                {profiledata.postCount || profiledata.postCount === 0 ? (
+                  <div style={{ display: "flex", flexDirection: "column" }}>
+                    <Type>Posts</Type>
+                    <Number>{profiledata.postCount}</Number>
+                  </div>
+                ) : (
+                  <Skeleton variant="rectangular" width={80} height={50} />
+                )}
+              </UserPostAndFolloq>
+            </UserInnerDetails>
+          </UserDetailsinnerDiv>
+          <div
+            style={{
+              display: "inline-block",
+              fontFamily: "Nunito, sans-serif",
+              fontSize: "16px",
+              fontWeight: "600",
+              color: "#fff",
+              background: "linear-gradient(to right, #a153d2, #c94b82)",
+              padding: "8px 20px",
+              borderRadius: "25px",
+              margin: "10px 30px 10px",
+              boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+              alignSelf: "center",
+            }}
+          >
+            Posts
           </div>
-          {id && (
-            <button
-              onClick={() => handletoggle()}
-              style={{
-                width: "120px",
-                height: "30px",
-                backgroundColor: followingState ? "#a153d2" : "#a13684",
-                cursor: "pointer",
-                transition: "all 0.5s ease",
-                color: "white",
-                fontFamily: "Nunito",
-                borderRadius: "5px",
-                border: "none",
-                marginTop: "9px",
-                fontSize: "16px",
-              }}
-            >
-              {followingState ? "Unfollow" : "Follow"}
-            </button>
-          )}
-        </UserInfo>
-  
-        <UserPostAndFolloq>
-        {profiledata.followersCount || profiledata.followersCount===0  ? (
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <Type>Followers</Type>
-            <Number>{profiledata.followersCount}</Number>
-          </div>
-          ) :  <Skeleton variant="rectangular" width={80} height={50} />
-        }
-        {profiledata.followingCount || profiledata.followingCount===0 ? (
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <Type>Following</Type>
-            <Number>{profiledata.followingCount}</Number>
-          </div>
-        ) :  <Skeleton variant="rectangular" width={80} height={50} />
-        }
-        {profiledata.postCount ||  profiledata.postCount === 0 ? (
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <Type>Posts</Type>
-            <Number>{profiledata.postCount}</Number>
-          </div>) :  <Skeleton variant="rectangular" width={80} height={50} />
-          }
-        </UserPostAndFolloq>
-      </UserInnerDetails>
-    </UserDetailsinnerDiv>
-    
-    {/* Middle content that grows */}
-    <MainContent style={{backgroundColor : " #f8f8ff"}}>
-      <ContentCard finalid={finalid } />
-    </MainContent>
-  
-    {/* Sticky footer */}
-    <AppFooter />
-  </PageWrapper>
-  </>
+
+          <ContentCard finalid={finalid} />
+        </ContentWrapper>
+
+        <AppFooter />
+      </PageWrapper>
+    </>
   );
 };

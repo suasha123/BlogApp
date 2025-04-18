@@ -102,10 +102,8 @@ const NoPostsContainer = styled.div`
   }
 `;
 
-export const ContentCard = ({ finalid , category }) => {
-  console.log(category);
-  const whattofetch = finalid ? `/allposts?userid=${finalid}` : category ? `/allposts?c=${encodeURIComponent(category)}` : "/allposts";
-  console.log(whattofetch);
+export const ContentCard = ({ finalid , selectedCategory }) => {
+  const whattofetch = finalid ? `/allposts?userid=${finalid}` : selectedCategory==='allposts' ? "/allposts": `/allposts?c=${encodeURIComponent(selectedCategory)}`;
   const [posts, setPosts] = useState([]);
   const [Loading, setLoading] = useState(true);
   const fetchAllposts = async () => {
@@ -130,7 +128,7 @@ export const ContentCard = ({ finalid , category }) => {
   useEffect(()=>{
     fetchAllposts();
     setLoading(true);
-  },[finalid, category])
+  },[finalid, selectedCategory])
   useEffect(()=>{
     const timer = setTimeout(()=>{
       setLoading(false) ;
@@ -140,13 +138,13 @@ export const ContentCard = ({ finalid , category }) => {
   return (
     <>
     {Loading && <Loader />}
+      <ContentCardMain>
       {posts.length === 0 && !Loading && (
         <NoPostsContainer>
           <img src={noposts} alt="No posts" />
           <p>No posts found.</p>
         </NoPostsContainer>
       )}
-      <ContentCardMain>
         {posts.map((ele, index) => (
           <ContentCardInner  style={{display : Loading ? "none" : "block"  }} key={index}>
             <CardHeader>

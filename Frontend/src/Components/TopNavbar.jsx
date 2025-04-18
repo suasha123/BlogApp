@@ -29,7 +29,6 @@ const MainDiv = styled.div`
 
 const Item = styled.a`
   text-decoration: none;
-  background-color: #7c20e0;
   height: 40px;
   display: flex;
   justify-content: center;
@@ -40,12 +39,12 @@ const Item = styled.a`
   padding: 0px 10px;
   border-radius: 10px;
   font-family: "Poppins", sans-serif;
-  color: white;
   transition: all 0.5s ease;
+  background-color: ${({ selected }) => (selected ? "white" : "#7c20e0")};
+  color: ${({ selected }) => (selected ? "#7c20e0" : "white")};
 
   &:hover {
-    background-color: white;
-    color: #7c20e0;
+    background-color: ${({ selected }) => (selected ? "#f0f0f0" : "#9157e5")};
   }
 `;
 
@@ -60,9 +59,11 @@ const HomeButton = styled.a`
   font-family: "Poppins", sans-serif;
   font-size: 0.8rem;
   text-decoration: none;
-
+  transition: all 0.5s ease;
+  background-color: ${({ selected }) => (selected ? "white" : "#7c20e0")};
+  color: ${({ selected }) => (selected ? "#7c20e0" : "white")};
   &:hover {
-    background-color: #eaeaea;
+    background-color: ${({ selected }) => (selected ? "#f0f0f0" : "#9157e5")};
   }
 `;
 
@@ -116,7 +117,7 @@ const ArrowRight = styled(IoIosArrowDroprightCircle)`
   transition: opacity 0.3s ease;
 `;
 
-export const TopNav = ({handleCategory}) => {
+export const TopNav = ({handleCategory,selectedCategory}) => {
   const scrollRef = useRef();
   const [showLeft, setShowLeft] = useState(false);
   const [showRight, setShowRight] = useState(false);
@@ -164,12 +165,20 @@ export const TopNav = ({handleCategory}) => {
       <FadeLeft show={showLeft} />
       <FadeRight show={showRight} />
       <MainDiv ref={scrollRef}>
-        <HomeButton href="#">
+        <HomeButton 
+        selected={selectedCategory === 'allposts'}
+        href="#" onClick={(e)=>{
+            
+            e.preventDefault();
+              console.log();
+              handleCategory("allposts");
+        }}>
           <IoHomeOutline size={18} />
           Home
         </HomeButton>
         {items.map((item, index) => (
           <Item
+             selected={selectedCategory === item}
             href="#"
             key={index}
             onClick={(e) => {
