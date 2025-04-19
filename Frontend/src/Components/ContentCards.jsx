@@ -112,7 +112,6 @@ export const ContentCard = ({ finalid , selectedCategory }) => {
       const data = await res.json();
       if (res.ok) {
         setPosts(data.posts);
-        console.log(data.posts);
       } else {
         console.log(data.msg);
       }

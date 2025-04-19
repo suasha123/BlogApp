@@ -21,6 +21,21 @@ app.use(cors({
 }))
 
 const PORT = process.env.PORT;
+app.get('/lists' , async(req,res)=>{
+    try{
+      const {data , userid} = req.query;
+      const userslist = await User.findById(userid).populate(data,'name profilepic');
+      const final = userslist[data];
+      if(!userslist){
+        return res.status(404).json({msg : "User not found"});
+      } 
+      return  res.status(200).json({final});
+    }
+  catch(err){
+    console.log(err)
+      return res.status(500).json({msg : "Error fetching details"});
+  }
+})
 app.get('/getfollowingstatus' , async(req,res)=>{
    const {followerid , followeeId} = req.query;
    try{
@@ -68,7 +83,7 @@ app.get('/allposts', async (req, res) => {
 
     let posts;
     if(c){
-      posts = await PostModel.find({category : c}).populate('author');
+      posts = await PostModel.find({category : c}).populate('author', 'name profilepic');
       
       if(!posts){
         return res.status(400).json({msg : "Error fetching Posts"});
@@ -76,13 +91,13 @@ app.get('/allposts', async (req, res) => {
       return  res.status(200).json({ posts });
     }
     if (!userid) {
-      posts = await PostModel.find().populate('author');
+      posts = await PostModel.find().populate('author', 'name profilepic');
       if(!posts){
         return res.status(400).json({msg : "Error fetching Posts"});
       }
       return  res.status(200).json({ posts });
     } else {
-      posts = await PostModel.find({ author: userid }).populate('author');
+      posts = await PostModel.find({ author: userid }).populate('author', 'name profilepic');
       if(!posts){
         return res.status(400).json({msg : "Error fetching Posts"});
       }

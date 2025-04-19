@@ -1,12 +1,72 @@
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Navigate, useParams, useNavigate } from "react-router-dom";
 import portfolio from "../assets/portfolio.png";
-import styled from "styled-components";
 import { EditModal } from "./Edit";
 import { ContentCard } from "./ContentCards";
 import { AppFooter } from "./Footer";
 import { Skeleton } from "@mui/material";
 import { Loader } from "./Reusuable Component/Loader";
+import { Followwee } from "./Followers-ingdata";
+import styled, { keyframes } from "styled-components";
+const mulShdSpin = keyframes`
+  0%, 100% {
+    box-shadow: 0 -3em 0 0.2em, 
+      2em -2em 0 0em, 3em 0 0 -1em, 
+      2em 2em 0 -1em, 0 3em 0 -1em, 
+      -2em 2em 0 -1em, -3em 0 0 -1em, 
+      -2em -2em 0 0;
+  }
+  12.5% {
+    box-shadow: 0 -3em 0 0, 2em -2em 0 0.2em, 
+      3em 0 0 0, 2em 2em 0 -1em, 0 3em 0 -1em, 
+      -2em 2em 0 -1em, -3em 0 0 -1em, 
+      -2em -2em 0 -1em;
+  }
+  25% {
+    box-shadow: 0 -3em 0 -0.5em, 
+      2em -2em 0 0, 3em 0 0 0.2em, 
+      2em 2em 0 0, 0 3em 0 -1em, 
+      -2em 2em 0 -1em, -3em 0 0 -1em, 
+      -2em -2em 0 -1em;
+  }
+  37.5% {
+    box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em,
+      3em 0em 0 0, 2em 2em 0 0.2em, 0 3em 0 0em, 
+      -2em 2em 0 -1em, -3em 0em 0 -1em, -2em -2em 0 -1em;
+  }
+  50% {
+    box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em,
+      3em 0 0 -1em, 2em 2em 0 0em, 0 3em 0 0.2em, 
+      -2em 2em 0 0, -3em 0em 0 -1em, -2em -2em 0 -1em;
+  }
+  62.5% {
+    box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em,
+      3em 0 0 -1em, 2em 2em 0 -1em, 0 3em 0 0, 
+      -2em 2em 0 0.2em, -3em 0 0 0, -2em -2em 0 -1em;
+  }
+  75% {
+    box-shadow: 0em -3em 0 -1em, 2em -2em 0 -1em, 
+      3em 0em 0 -1em, 2em 2em 0 -1em, 0 3em 0 -1em, 
+      -2em 2em 0 0, -3em 0em 0 0.2em, -2em -2em 0 0;
+  }
+  87.5% {
+    box-shadow: 0em -3em 0 0, 2em -2em 0 -1em, 
+      3em 0 0 -1em, 2em 2em 0 -1em, 0 3em 0 -1em, 
+      -2em 2em 0 0, -3em 0em 0 0, -2em -2em 0 0.2em;
+  }
+`;
+
+const StyledLoader = styled.div`
+  color: #fff;
+  font-size: 5px;
+  width: 1em;
+  height: 1em;
+  border-radius: 50%;
+  position: relative;
+  text-indent: -9999em;
+  transform: translateZ(0);
+  animation: ${mulShdSpin} 1.3s infinite linear;
+`;
 
 const PageWrapper = styled.div`
   flex-direction: column;
@@ -196,18 +256,26 @@ const EditPofile = styled.button`
   }
 `;
 
-export const ProfileInfo = ({ LoggedIn, data }) => {
-  const navigate = useNavigate();
+export const ProfileInfo = ({LoggedIn, data}) => {
+  if (!LoggedIn) {
+    return <Navigate to="/sign-up" replace />;
+  }
+
   const { id } = useParams();
+  if(data.id===id){
+    return <Navigate to="/userprofile" replace />;
+  }
   const finalid = id || data.id;
   const [openModal, setOpenModal] = useState(false);
   const [profiledata, setProfiledata] = useState({});
   const [followingState, setFollowingState] = useState(false);
   const [loading, setLoading] = useState(true);
-
+  const [openlist, setopenlist] = useState(false);
+  const [whattoFetch, setWhattoFetch] = useState("");
+  const [miniloading, setMiniloading] = useState(false);
   const handletoggle = async () => {
+    setMiniloading(true);
     const newstate = !followingState;
-    setFollowingState(newstate);
     try {
       const res = await fetch(
         `/updatefollower/?followerid=${data.id}&followeeId=${finalid}&update=${
@@ -220,15 +288,20 @@ export const ProfileInfo = ({ LoggedIn, data }) => {
           },
         }
       );
+      if (res.ok) {
+        fetchUserProfile();
+        setFollowingState(newstate);
+      }
       if (!res.ok) console.log("follower not updated");
     } catch (err) {
-      setFollowingState(!newstate);
+      console.log(err);
     }
   };
-
-  if (!LoggedIn) {
-    return <Navigate to="/sign-up" replace />;
-  }
+  useEffect(() => {
+    if (miniloading) {
+      setMiniloading(false);
+    }
+  }, [followingState]);
 
   const fetchUserProfile = async () => {
     try {
@@ -265,18 +338,16 @@ export const ProfileInfo = ({ LoggedIn, data }) => {
   };
 
   useEffect(() => {
+    setLoading(true); // reset loading
     fetchUserProfile();
-    if (id) {
-      getfollowingStatus();
-    }
-  }, []);
+    if (id) getfollowingStatus();
 
-  useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
     }, 5000);
+
     return () => clearTimeout(timer);
-  }, []);
+  }, [finalid]);
 
   return (
     <>
@@ -290,7 +361,13 @@ export const ProfileInfo = ({ LoggedIn, data }) => {
             Edit Profile
           </EditPofile>
         )}
-
+        {openlist && (
+          <Followwee
+            onClose={() => setopenlist(false)}
+            whattoFetch={whattoFetch}
+            finalid={finalid}
+          />
+        )}
         {/* Header Background */}
         <div
           style={{
@@ -353,7 +430,8 @@ export const ProfileInfo = ({ LoggedIn, data }) => {
                       fontSize: "16px",
                     }}
                   >
-                    {followingState ? "Unfollow" : "Follow"}
+                    {!miniloading && followingState ? "Unfollow" : "Follow"}
+                    {miniloading && <miniloading />}
                   </button>
                 )}
               </UserInfo>
@@ -361,7 +439,17 @@ export const ProfileInfo = ({ LoggedIn, data }) => {
               <UserPostAndFolloq>
                 {profiledata.followersCount ||
                 profiledata.followersCount === 0 ? (
-                  <div style={{ display: "flex", flexDirection: "column" , cursor: "pointer" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => {
+                      setopenlist(true);
+                      setWhattoFetch("followers");
+                    }}
+                  >
                     <Type>Followers</Type>
                     <Number>{profiledata.followersCount}</Number>
                   </div>
@@ -371,7 +459,17 @@ export const ProfileInfo = ({ LoggedIn, data }) => {
 
                 {profiledata.followingCount ||
                 profiledata.followingCount === 0 ? (
-                  <div style={{ display: "flex", flexDirection: "column" ,cursor: "pointer" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => {
+                      setopenlist(true);
+                      setWhattoFetch("following");
+                    }}
+                  >
                     <Type>Following</Type>
                     <Number>{profiledata.followingCount}</Number>
                   </div>

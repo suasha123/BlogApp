@@ -197,7 +197,6 @@ export const NavBar = ({
     }
   }, [buttonclicked]);
   useEffect(() => {
-    console.log(data);
     setvisible(true);
   }, [data]);
 

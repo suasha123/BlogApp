@@ -1,28 +1,8 @@
 import React, { useState } from "react";
 import styled, { keyframes } from "styled-components";
 import { Overlayy } from "./Reusuable Component/Overaly";
-const fadeIn = keyframes`
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-`;
+import { Modal } from "./Reusuable Component/ModalContent";
 
-const ModalContent = styled.div`
-  background: linear-gradient(135deg, #b31217, #c8338b, #8e44ad);
-  padding: 2rem;
-  border-radius: 16px;
-  color: white;
-  width: 400px;
-  max-width: 90%;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-  animation: ${fadeIn} 0.3s ease-in-out;
-  position: relative;
-`;
 
 const Input = styled.input`
   width: 100%;
@@ -150,7 +130,7 @@ export const EditModal = ({ data, onClose }) => {
 
   return (
     <Overlayy>
-      <ModalContent>
+      <Modal>
         <CloseBtn onClick={onClose}>×</CloseBtn>
         <h2 style={{ fontFamily: "Nunito", marginBottom: "10px" }}>
           Edit Profile
@@ -188,7 +168,7 @@ export const EditModal = ({ data, onClose }) => {
           />
           <Button type="submit">Submit</Button>
         </form>
-      </ModalContent>
+      </Modal>
       </Overlayy>
   );
 };
