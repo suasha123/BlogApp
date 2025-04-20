@@ -1,6 +1,6 @@
 import { StrictMode, useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
-import { NavBar } from "./Components/NavBar";
+import { HomePage } from "./Components/Home";
 import { Error } from "./Components/Error";
 import { Login } from "./Components/Loginn";
 import { Signup } from "./Components/Signup";
@@ -58,7 +58,7 @@ const App = () => {
           <Route path="/sign-up" element={<Signup />} />
           <Route
             path="/"
-            element={<NavBar setData={setData} setLoggedIn={setLoggedIn} LoggedIn={LoggedIn} data={data} setbuttonclicked={setbuttonclicked} buttonclicked={buttonclicked}/>}
+            element={<HomePage setData={setData} setLoggedIn={setLoggedIn} LoggedIn={LoggedIn} data={data} setbuttonclicked={setbuttonclicked} buttonclicked={buttonclicked}/>}
           />
            <Route
             path="/userprofile/:id"

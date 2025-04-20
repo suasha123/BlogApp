@@ -102,7 +102,7 @@ const NoPostsContainer = styled.div`
   }
 `;
 
-export const ContentCard = ({ finalid , selectedCategory }) => {
+export const ContentCard = ({ finalid , selectedCategory , setSearchParams}) => {
   const whattofetch = finalid ? `/allposts?userid=${finalid}` : selectedCategory==='allposts' ? "/allposts": `/allposts?c=${encodeURIComponent(selectedCategory)}`;
   const [posts, setPosts] = useState([]);
   const [Loading, setLoading] = useState(true);
@@ -145,7 +145,7 @@ export const ContentCard = ({ finalid , selectedCategory }) => {
         </NoPostsContainer>
       )}
         {posts.map((ele, index) => (
-          <ContentCardInner  style={{display : Loading ? "none" : "block"  }} key={index}>
+          <ContentCardInner onClick={()=>{setSearchParams({id: ele._id})}}  style={{display : Loading ? "none" : "block"  }} key={index}>
             <CardHeader>
               {ele.author.profilepic ? (
                 <ProfilePic

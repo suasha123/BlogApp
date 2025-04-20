@@ -168,7 +168,6 @@ export const TopNav = ({handleCategory,selectedCategory}) => {
         <HomeButton 
         selected={selectedCategory === 'allposts'}
         href="#" onClick={(e)=>{
-            
             e.preventDefault();
               console.log();
               handleCategory("allposts");

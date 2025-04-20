@@ -505,7 +505,6 @@ export const ProfileInfo = ({LoggedIn, data}) => {
           >
             Posts
           </div>
-
           <ContentCard finalid={finalid} />
         </ContentWrapper>
 

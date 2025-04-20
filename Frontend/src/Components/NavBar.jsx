@@ -1,30 +1,14 @@
-import img from "../assets/Bloglogo.png";
-import styled from "styled-components";
-import { CiLogin } from "react-icons/ci";
-import { IoIosSearch } from "react-icons/io";
-import { PiList } from "react-icons/pi";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { UserProfile } from "./UserProfile";
-import { TopNav } from "./TopNavbar";
-import { Sidebar } from "./Sidebar";
+import img from "../assets/Bloglogo.png";
 import portfolio from "../assets/portfolio.png";
-import { CreateBlog } from "./CreateButton";
-import { ContentCard } from "./ContentCards";
-import { AppFooter } from "./Footer";
-import { useSearchParams } from 'react-router-dom';
-const Nav = styled.nav`
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-`;
+import { CiLogin } from "react-icons/ci";
+import { PiList } from "react-icons/pi";
+import { IoIosSearch } from "react-icons/io";
+import { UserProfile } from "./UserProfile";
+import styled from "styled-components";
 
-const MainContent = styled.div`
-  flex: 1;
-  background-color: #f8f8ff;
-`;
-
-const Div = styled.div`
+export const Div = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -32,11 +16,13 @@ const Div = styled.div`
   border: 1px solid #e7e9ed;
   min-width: 288px;
   z-index: 1000;
+
   @media (max-width: 383px) {
     padding-right: 7px;
   }
 `;
-const Input = styled.input`
+
+export const Input = styled.input`
   background-color: #f9fafb;
   border-radius: 20px;
   color: black;
@@ -58,7 +44,7 @@ const Input = styled.input`
   }
 `;
 
-const LoginButton = styled(Link)`
+export const LoginButton = styled(Link)`
   background-color: #7c3aed;
   font-family: "Nunito", sans-serif;
   font-size: 16px;
@@ -73,6 +59,7 @@ const LoginButton = styled(Link)`
   justify-content: space-evenly;
   position: relative;
   text-decoration: none;
+
   @media (max-width: 944px) {
     width: 18%;
   }
@@ -81,15 +68,17 @@ const LoginButton = styled(Link)`
     width: 24%;
     font-size: 13px;
   }
+
   @media (max-width: 383px) {
     width: 30%;
     font-size: 13px;
   }
 `;
 
-const SearchIcon = styled(IoIosSearch)`
+export const SearchIcon = styled(IoIosSearch)`
   display: none;
   cursor: pointer;
+
   @media (max-width: 547px) {
     display: block;
     font-size: 22px;
@@ -97,15 +86,17 @@ const SearchIcon = styled(IoIosSearch)`
     left: 50px;
     color: #7c3aed;
   }
+
   @media (max-width: 458px) {
     left: 20px;
   }
-  @media (max-width: 458px) {
+
+  @media (max-width: 383px) {
     left: 10px;
   }
 `;
 
-const MsgConatiner = styled.div`
+export const MsgConatiner = styled.div`
   width: 20%;
   height: 40px;
   background-color: white;
@@ -123,14 +114,17 @@ const MsgConatiner = styled.div`
     visible ? "translateX(0%)" : "translateX(100%)"};
   transition: transform 0.5s ease-in-out;
   z-index: 10000;
+
   @media (max-width: 763px) {
     width: 40%;
   }
+
   @media (max-width: 450px) {
     width: 55%;
   }
 `;
-const Line = styled.div`
+
+export const Line = styled.div`
   position: absolute;
   height: 2px;
   background-color: green;
@@ -138,6 +132,7 @@ const Line = styled.div`
   border-radius: 5px;
   animation: ${({ visible }) =>
     visible ? "WidthDecrease 2s forwards" : "none"};
+
   @keyframes WidthDecrease {
     from {
       width: 100%;
@@ -147,36 +142,25 @@ const Line = styled.div`
     }
   }
 `;
-export const NavBar = ({
+
+export const NavTopBar = ({
   LoggedIn,
   data,
   setbuttonclicked,
   buttonclicked,
   setData,
   setLoggedIn,
+  setopen,
+  isSerachVisible,
 }) => {
   const [profile, setProfile] = useState(false);
   const [clicked, setCliked] = useState(false);
   const [isVisible, setvisible] = useState(false);
-  const [isopen, setopen] = useState(false);
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [isSerachVisible, setSearchVisible] = useState(
-    window.innerWidth >= 547
-  );
-  const handleSetCategory = (category) => {
-    if (!category || category === 'allposts') {
-      setSearchParams({});
-    } else {
-      setSearchParams({ category });
-    }
-  };
-  const selectedCategory = searchParams.get('category') || 'allposts';
+
   function getdisplay() {
-    if (clicked) {
-      return "block";
-    }
-    return "none";
+    return clicked ? "block" : "none";
   }
+
   useEffect(() => {
     if (isVisible) {
       setTimeout(() => setvisible(false), 2000);
@@ -184,97 +168,78 @@ export const NavBar = ({
   }, [isVisible]);
 
   useEffect(() => {
-    const handlevisiblity = () => {
-      setSearchVisible(window.innerWidth >= 547);
-    };
-    window.addEventListener("resize", handlevisiblity);
-    return () => window.removeEventListener("resize", handlevisiblity);
-  }, []);
-
-  useEffect(() => {
     if (buttonclicked) {
       setTimeout(() => setbuttonclicked(false), 3000);
     }
   }, [buttonclicked]);
+
   useEffect(() => {
     setvisible(true);
   }, [data]);
 
   return (
-    <>
-      <Nav>
-        <Div>
-          {buttonclicked && (
-            <MsgConatiner visible={isVisible}>
-              Login Successful
-              <Line visible={isVisible} />
-            </MsgConatiner>
-          )}
-          {!isSerachVisible && (
-            <PiList
-              onClick={() => {
-                setopen(true);
+    <Div>
+      {buttonclicked && (
+        <MsgConatiner visible={isVisible}>
+          Login Successful
+          <Line visible={isVisible} />
+        </MsgConatiner>
+      )}
+
+      {!isSerachVisible && (
+        <PiList
+          onClick={() => {
+            setopen(true);
+          }}
+        />
+      )}
+
+      <img src={img} alt="Blog Logo" />
+
+      <Input
+        placeholder="Search here..."
+        style={{ display: isSerachVisible ? "block" : getdisplay() }}
+      />
+
+      <SearchIcon onClick={() => setCliked(!clicked)} />
+
+      {LoggedIn ? (
+        <>
+          <div
+            onClick={() => setProfile(!profile)}
+            style={{
+              width: "50px",
+              height: "50px",
+              position: "relative",
+              cursor: "pointer",
+              borderRadius: "50%",
+            }}
+          >
+            <img
+              src={data.pic ? `http://localhost:3000/${data.pic}` : portfolio}
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                borderRadius: "50%",
               }}
+              alt="Profile"
+            />
+          </div>
+          {profile && (
+            <UserProfile
+              data={data}
+              setData={setData}
+              setLoggedIn={setLoggedIn}
             />
           )}
-          <img src={img} alt="Blog Logo" />
-          <Input
-            placeholder="Search here..."
-            style={{
-              display: isSerachVisible ? "block" : getdisplay(),
-            }}
-          />
-          <SearchIcon onClick={() => setCliked(!clicked)} />
-          {LoggedIn ? (
-            <>
-              <div
-                onClick={() => setProfile(!profile)}
-                style={{
-                  width: "50px",
-                  height: "50px",
-                  position: "relative",
-                  cursor: "pointer",
-                  borderRadius: "50%",
-                }}
-              >
-                <img
-                  src={
-                    data.pic ? `http://localhost:3000/${data.pic}` : portfolio
-                  }
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    borderRadius: "50%",
-                  }}
-                />
-              </div>
-              {profile && (
-                <UserProfile
-                  data={data}
-                  setData={setData}
-                  setLoggedIn={setLoggedIn}
-                />
-              )}
-            </>
-          ) : (
-            <LoginButton to="/login">
-              <CiLogin style={{ fontSize: "20px", strokeWidth: "1.5" }} />
-              Sign-In
-            </LoginButton>
-          )}
-        </Div>
-        {isSerachVisible && <TopNav handleCategory={handleSetCategory} selectedCategory={selectedCategory}/>}
-        <MainContent>
-        <ContentCard selectedCategory={selectedCategory}/>
-        </MainContent>
-       <AppFooter />
-      </Nav>
-
-      {!isSerachVisible && isopen && (
-        <Sidebar setopen={setopen} isopen={isopen} />
+        </>
+      ) : (
+        <LoginButton to="/login">
+          <CiLogin style={{ fontSize: "20px", strokeWidth: "1.5" }} />
+          Sign-In
+        </LoginButton>
       )}
-      {LoggedIn && <CreateBlog />}
-    </>
+    </Div>
   );
 };
