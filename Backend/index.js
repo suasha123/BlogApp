@@ -10,6 +10,7 @@ const BioRouter = require("./Router/bio");
 const PostModel = require("./Model/Post");
 const User = require("./Model/userModel");
 const mongoose = require("mongoose");
+const CommentModel = require("./Model/Comment");
 dotenv.config();
 const app = express();
 app.use(express.json());
@@ -82,26 +83,74 @@ app.get("/userprofile/info/:userid", async (req, res) => {
     if (!userinfo) {
       return res.status(404).json({ msg: "User not found" });
     }
-    res
-      .status(200)
-      .json({
-        userinfo,
-        followerslength: userinfo.followers.length,
-        followinglength: userinfo.following.length,
-      });
+    res.status(200).json({
+      userinfo,
+      followerslength: userinfo.followers.length,
+      followinglength: userinfo.following.length,
+    });
   } catch (err) {
     res.status(500).json({ msg: "Error Fetching data" });
   }
 });
-app.get("/posts/:id", async (req, res) => {
+app.get("/p/:userid", async (req, res) => {
   try {
-    const post = await PostModel.findById(req.params.id).populate("author");
-    if (!post) return res.status(404).json({ msg: "Post not found" });
-    res.json({ post });
+    const posts = await PostModel.find(
+      { author: req.params.userid }, 
+      "title image"
+    );
+
+    if (!posts || posts.length === 0) {
+      return res.status(404).json({ msg: "No posts found" });
+    }
+
+    res.json({ posts });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ msg: "Server error" });
   }
 });
+app.post("/post/comment", async (req, res) => {
+  try {
+    const { postFetch, curruserid, comment } = req.body;
+
+    const newComment = await CommentModel.create({
+      comment,
+      author: curruserid,
+    });
+
+    await PostModel.findByIdAndUpdate(postFetch, {
+      $push: { comments: newComment._id },
+    });
+
+    res.status(201).json({ success: true, comment: newComment });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Failed to post comment" });
+  }
+});
+
+app.get("/posts/:id", async (req, res) => {
+  try {
+    const post = await PostModel.findById(req.params.id)
+      .populate("author", "name profilepic")
+      .populate({
+        path: "comments",
+        populate: {
+          path: "author",
+          model: "User",
+          select: "name profilepic",
+        },
+      });
+
+    if (!post) return res.status(404).json({ msg: "Post not found" });
+
+    res.json({ post });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: "Server error" });
+  }
+});
+
 
 app.get("/allposts", async (req, res) => {
   try {

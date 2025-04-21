@@ -1,7 +1,9 @@
 import styled, { createGlobalStyle } from "styled-components";
 import { useEffect, useState } from "react";
+import { FaComment } from "react-icons/fa6";
+import { BiLike } from "react-icons/bi";
+import { Skeleton } from "@mui/material";
 
-// Global font setup
 const GlobalStyle = createGlobalStyle`
   * {
     font-family: 'Nunito', sans-serif;
@@ -21,6 +23,11 @@ const MainDiv = styled.div`
     flex-direction: column;
     padding: 1rem;
   }
+  @media (max-width: 425px) {
+    flex-direction: column;
+    padding: 0.5rem;
+    gap: 1rem;
+  }
 `;
 
 const DivOne = styled.div`
@@ -29,11 +36,13 @@ const DivOne = styled.div`
   background-color: white;
   border-radius: 1rem;
   padding: 1.5rem;
-  overflow-y: auto;
+  overflow-y: scroll;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-
   @media (max-width: 768px) {
     width: 100%;
+  }
+  @media (max-width: 425px) {
+    padding: 1rem;
   }
 `;
 
@@ -52,8 +61,57 @@ const DivTwo = styled.div`
 `;
 
 const PostContent = styled.div`
- padding : 10px;
-  margin-bottom: 2rem; 
+  padding: 10px;
+  margin-bottom: 2rem;
+`;
+
+const PostHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.8rem;
+  margin-bottom: 5px;
+`;
+
+const AuthorInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+
+  img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  p {
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+
+  @media (max-width: 425px) {
+    gap: 0.5rem;
+
+    p {
+      font-size: 1rem;
+    }
+  }
+`;
+
+const LikeSection = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  color: #555;
+
+  @media (max-width: 425px) {
+    font-size: 0.9rem;
+    gap: 0.4rem;
+  }
 `;
 
 const CommentSection = styled.div`
@@ -96,21 +154,71 @@ const CommentButton = styled.button`
 `;
 
 const RelatedPost = styled.div`
-  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
   margin-bottom: 1rem;
+  margin-bottom: 1rem;
+  padding: 0.6rem;
+  border-radius: 0.6rem;
   background-color: #f3f3ff;
-  border-radius: 0.8rem;
   cursor: pointer;
   transition: 0.2s ease;
 
   &:hover {
-    background-color: #e9e9ff;
+    background-color: #e5e5ff;
+  }
+
+  img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  h4 {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #5b21b6;
+    word-break: break-word;
   }
 `;
 
-export const ContentView = ({ postFetch }) => {
+export const ContentView = ({
+  postFetch,
+  setSearchParams,
+  LoggedIn,
+  curruserid,
+}) => {
   const [post, setPost] = useState({});
-
+  const [relatedPosts, setRelatedPosts] = useState([]);
+  const [comment, setComment] = useState({});
+  const postComment = async () => {
+    try {
+      const res = await fetch("/post/comment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          postFetch,
+          curruserid,
+          comment,
+        }),
+      });
+      const body = await res.json();
+      if (res.ok) {
+        console.log(body.comment);
+      } else {
+        console.log(body.message);
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setComment("");
+    }
+  };
   const fetchPost = async () => {
     try {
       const res = await fetch(`/posts/${postFetch}`);
@@ -125,80 +233,179 @@ export const ContentView = ({ postFetch }) => {
     }
   };
 
+  const fetchmore = async (userid) => {
+    try {
+      const res = await fetch(`/p/${userid}`);
+      const data = await res.json();
+      if (res.ok) {
+        const filtered = data.posts.filter((p) => p._id !== post._id);
+        setRelatedPosts(filtered);
+      } else {
+        console.log("Error fetching user's other posts");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   useEffect(() => {
     fetchPost();
   }, []);
+  useEffect(() => {
+    fetchPost();
+  }, [postFetch]);
+  useEffect(() => {
+    if (post?.author?._id) {
+      fetchmore(post.author._id);
+    }
+  }, [post]);
 
   return (
     <>
       <GlobalStyle />
       <MainDiv>
         <DivOne>
-          {post && post.title ? (
-            <PostContent>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "1rem",
-                  marginBottom: "1rem",
-                }}
-              >
-                <img
-                  src={`http://localhost:3000/${post.author.profilepic}`}
-                  alt="User Profile"
-                  style={{
-                    width: "50px",
-                    height: "50px",
-                    borderRadius: "50%",
-                    objectFit: "cover",
-                  }}
-                />
-                <p style={{ fontWeight: "600", fontSize: "1.1rem" }}>
-                  {post.author.name}
-                </p>
-              </div>
+          <PostContent>
+            <PostHeader>
+              <AuthorInfo>
+                {post?.author ? (
+                  <img
+                    src={`http://localhost:3000/${post.author.profilepic}`}
+                    alt="User Profile"
+                  />
+                ) : (
+                  <Skeleton variant="circular" width={50} height={50} />
+                )}
+                {post?.author ? (
+                  <p>{post.author.name}</p>
+                ) : (
+                  <Skeleton variant="rectangular" width={120} height={20} />
+                )}
+              </AuthorInfo>
+
+              <LikeSection>
+                <BiLike size={20} />
+                <span>0</span>
+              </LikeSection>
+            </PostHeader>
+
+            {post?.image ? (
               <img
                 src={`http://localhost:3000/${post.image}`}
                 alt="Post Image"
                 style={{
-                  width: "80%", 
-                  height: "auto", 
+                  width: "100%",
+                  height: "auto",
                   objectFit: "cover",
-                  marginBottom: "1rem", 
+                  margin: "1rem 0",
+                  borderRadius: "0.8rem",
                 }}
               />
-              <h2>{post.title}</h2>
+            ) : (
+              <Skeleton variant="rectangular" width={400} height={200} />
+            )}
+
+            {post?.title ? (
+              <h2 style={{ color: "purple" }}>{post.title}</h2>
+            ) : (
+              <Skeleton variant="text" sx={{ fontSize: "0.9rem" }} />
+            )}
+
+            {post?.content ? (
               <p dangerouslySetInnerHTML={{ __html: post.content }}></p>
-            </PostContent>
-          ) : (
-            <p>Loading post...</p>
-          )}
+            ) : (
+              <Skeleton variant="text" width={500} />
+            )}
+          </PostContent>
 
           <CommentSection>
-            <h3>Comments</h3>
+            <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
+              <FaComment style={{ color: "#a153d2" }} />
+              <h3 style={{ margin: 0 }}>Comments</h3>
+            </div>
             <CommentList>
-              <div>
-                <strong>Jane Doe</strong>: Great post!
-              </div>
-              <div>
-                <strong>John Smith</strong>: Thanks for sharing!
-              </div>
-              {/* Add dynamic comments here later */}
+              {post.comments && post.comments.length > 0 ? (
+                post.comments.map((c) => (
+                  <div
+                    key={c._id}
+                    style={{
+                      display: "flex",
+                      alignItems: "flex-start",
+                      gap: "0.7rem",
+                      marginBottom: "1rem",
+                    }}
+                  >
+                    <img
+                      src={`http://localhost:3000/${
+                        c.author?.profilepic || "uploads/default.png"
+                      }`}
+                      alt="User"
+                      style={{
+                        width: "35px",
+                        height: "35px",
+                        borderRadius: "50%",
+                        objectFit: "cover",
+                        flexShrink: 0,
+                      }}
+                    />
+                    <div>
+                      <p style={{ margin: "0", fontWeight: "600" }}>
+                        {c.author?.name || "Unknown"}
+                      </p>
+                      <p style={{ margin: "2px 0", lineHeight: "1.4" }}>
+                        {c.comment}
+                      </p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p>No comments yet.</p>
+              )}
             </CommentList>
-            <CommentInput placeholder="Write a comment..." rows="3" />
-            <CommentButton>Post Comment</CommentButton>
+
+            {LoggedIn && (
+              <div>
+                <CommentInput
+                  onChange={(e) => {
+                    setComment(e.target.value);
+                  }}
+                  placeholder="Write a comment..."
+                  rows="2"
+                />
+                <CommentButton
+                  onClick={() => {
+                    postComment();
+                  }}
+                >
+                  Post Comment
+                </CommentButton>
+              </div>
+            )}
           </CommentSection>
         </DivOne>
 
         <DivTwo>
           <h3>Related Posts</h3>
-          {[1, 2, 3, 4].map((item) => (
-            <RelatedPost key={item}>
-              <h4>Related Post {item}</h4>
-              <p>Short description of related post...</p>
-            </RelatedPost>
-          ))}
+          {relatedPosts.length > 0 ? (
+            relatedPosts.map((item) => (
+              <RelatedPost
+                key={item._id}
+                onClick={() => {
+                  setSearchParams({ id: item._id });
+                }}
+              >
+                {item.image && (
+                  <img
+                    src={`http://localhost:3000/${item.image}`}
+                    alt="Related"
+                  />
+                )}
+                <h4>{item.title}</h4>
+              </RelatedPost>
+            ))
+          ) : (
+            <p>No related posts found.</p>
+          )}
         </DivTwo>
       </MainDiv>
     </>

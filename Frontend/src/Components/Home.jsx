@@ -97,7 +97,7 @@ export const HomePage = ({
         )}
         <MainContent>
         {!showcontent && ( <ContentCard selectedCategory={selectedCategory} setSearchParams={setSearchParams}/>) }
-        {showcontent && (<ContentView postFetch={postFetch}/>)}
+        {showcontent && (<ContentView setSearchParams={setSearchParams}  postFetch={postFetch} LoggedIn={LoggedIn} curruserid={data.id}/>)}
     
         </MainContent>
         <AppFooter />

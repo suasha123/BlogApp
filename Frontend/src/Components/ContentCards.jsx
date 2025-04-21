@@ -175,7 +175,7 @@ export const ContentCard = ({ finalid , selectedCategory , setSearchParams}) => 
               ) : (
                 <Skeleton variant="text" sx={{ fontSize: "1.2rem" }} />
               )}
-              {/* <CardContent dangerouslySetInnerHTML={{ __html: ele.content }} /> */}
+             
             </CardBody>
           </ContentCardInner>
         ))}
