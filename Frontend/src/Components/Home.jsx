@@ -27,7 +27,6 @@ export const HomePage = ({
   setData,
   setLoggedIn,
 }) => {
-  console.log(data);
   const [isVisible, setvisible] = useState(false);
   const [isopen, setopen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();

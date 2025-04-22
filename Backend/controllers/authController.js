@@ -52,7 +52,7 @@ const sendOtp = async(req , res) =>{
    const gotp = Math.floor(100000 + Math.random() * 900000);
    const expiresAt = Date.now() + 5 * 60 * 1000;
    otpStore.set(email  , {gotp , expiresAt});
-   console.log(otpStore);
+  
   const mailOptions = {
       from : "suryaprataps471@gmail.com",
       to : email,

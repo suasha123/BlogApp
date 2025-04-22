@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import noposts from "../assets/noposts.png";
 import { Skeleton } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import { Loader } from "./Reusuable Component/Loader";
 const ContentCardMain = styled.div`
   font-family: "Nunito", sans-serif;
@@ -103,6 +104,7 @@ const NoPostsContainer = styled.div`
 `;
 
 export const ContentCard = ({ finalid , selectedCategory , setSearchParams}) => {
+  const navigate = useNavigate();
   const whattofetch = finalid ? `/allposts?userid=${finalid}` : selectedCategory==='allposts' ? "/allposts": `/allposts?c=${encodeURIComponent(selectedCategory)}`;
   const [posts, setPosts] = useState([]);
   const [Loading, setLoading] = useState(true);
@@ -129,11 +131,14 @@ export const ContentCard = ({ finalid , selectedCategory , setSearchParams}) => 
     setLoading(true);
   },[finalid, selectedCategory])
   useEffect(()=>{
-    const timer = setTimeout(()=>{
-      setLoading(false) ;
-    },3000);
+    let timer;
+    if(posts){
+     timer = setTimeout(()=>{
+        setLoading(false) ;
+      },1000);
+    }
     return ()=>clearTimeout(timer)
-  })
+  },[posts])
   return (
     <>
     {Loading && <Loader />}
@@ -145,7 +150,7 @@ export const ContentCard = ({ finalid , selectedCategory , setSearchParams}) => 
         </NoPostsContainer>
       )}
         {posts.map((ele, index) => (
-          <ContentCardInner onClick={()=>{setSearchParams({id: ele._id})}}  style={{display : Loading ? "none" : "block"  }} key={index}>
+          <ContentCardInner onClick={()=>{setSearchParams ? setSearchParams({id: ele._id}) : navigate(`/?id=${ele._id}`); }}  style={{display : Loading ? "none" : "block"  }} key={index}>
             <CardHeader>
               {ele.author.profilepic ? (
                 <ProfilePic

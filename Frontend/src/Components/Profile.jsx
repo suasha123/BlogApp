@@ -8,6 +8,7 @@ import { Skeleton } from "@mui/material";
 import { Loader } from "./Reusuable Component/Loader";
 import { Followwee } from "./Followers-ingdata";
 import styled, { keyframes } from "styled-components";
+import { UserProfile } from "./UserProfile";
 const mulShdSpin = keyframes`
   0%, 100% {
     box-shadow: 0 -3em 0 0.2em, 
@@ -265,6 +266,7 @@ export const ProfileInfo = ({LoggedIn, data}) => {
   if(data.id===id){
     return <Navigate to="/userprofile" replace />;
   }
+  const navigate = useNavigate();
   const finalid = id || data.id;
   const [openModal, setOpenModal] = useState(false);
   const [profiledata, setProfiledata] = useState({});
@@ -338,16 +340,23 @@ export const ProfileInfo = ({LoggedIn, data}) => {
   };
 
   useEffect(() => {
-    setLoading(true); // reset loading
+    setLoading(true);
     fetchUserProfile();
     if (id) getfollowingStatus();
-
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 5000);
-
-    return () => clearTimeout(timer);
   }, [finalid]);
+
+
+  useEffect(() => {
+    let timer;
+    if(profiledata){
+      timer = setTimeout(() => {
+        setLoading(false);
+      }, 2000);
+    }
+  
+    return () => clearTimeout(timer);
+  }, [profiledata]);
+  
 
   return (
     <>
@@ -505,7 +514,7 @@ export const ProfileInfo = ({LoggedIn, data}) => {
           >
             Posts
           </div>
-          <ContentCard finalid={finalid} />
+          <ContentCard   finalid={finalid} />
         </ContentWrapper>
 
         <AppFooter />

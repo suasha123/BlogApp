@@ -20,8 +20,7 @@ const uploadProfilePic = async (req, res) => {
         }
 
         res.status(200).json({
-            message: "Upload successful",
-            profilePic: updatedUser.profilePic
+            message: "Upload successful"
         });
     } catch (error) {
         console.error(error);
