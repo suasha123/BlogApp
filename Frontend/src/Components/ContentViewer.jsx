@@ -1,9 +1,9 @@
-import styled, { createGlobalStyle } from "styled-components";
+import { createGlobalStyle } from "styled-components";
 import { useEffect, useState } from "react";
 import { FaComment } from "react-icons/fa6";
 import { BiLike } from "react-icons/bi";
-import { Skeleton } from "@mui/material";
-
+import { FaThumbsUp } from "react-icons/fa";
+import styled, { keyframes } from "styled-components";
 const GlobalStyle = createGlobalStyle`
   * {
     font-family: 'Nunito', sans-serif;
@@ -185,6 +185,19 @@ const RelatedPost = styled.div`
   }
 `;
 
+const spin = keyframes`
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+`;
+const CLoader = styled.div`
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(128, 0, 128, 0.2);
+  border-top: 4px solid #6a0dad;
+  border-radius: 50%;
+  animation: ${spin} 1s linear infinite;
+  transform: translate(-50%, -50%);
+`;
 export const ContentView = ({
   postFetch,
   setSearchParams,
@@ -194,6 +207,34 @@ export const ContentView = ({
   const [post, setPost] = useState({});
   const [relatedPosts, setRelatedPosts] = useState([]);
   const [comment, setComment] = useState({});
+  const [like, setLike] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const handleLike = async () => {
+    try {
+      const newstate = !like;
+      const res = await fetch(
+        `/postlike/?user=${curruserid}&postId=${postFetch}&like=${
+          newstate ? 1 : -1
+        }`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (res.ok) {
+        fetchPost();
+        setLike(newstate);
+      } else {
+        setLike(!newstate);
+      }
+      console.log(res);
+    } catch (err) {
+      setLike(!newstate);
+      console.log(err);
+    }
+  };
   const postComment = async () => {
     try {
       const res = await fetch("/post/comment", {
@@ -247,7 +288,13 @@ export const ContentView = ({
       console.log(err);
     }
   };
-
+  const handlelikestatus = (post) => {
+    if (post.likes.includes(curruserid)) {
+      setLike(true);
+    } else {
+      setLike(false);
+    }
+  };
   useEffect(() => {
     fetchPost();
   }, []);
@@ -255,9 +302,25 @@ export const ContentView = ({
     fetchPost();
   }, [postFetch]);
   useEffect(() => {
+    let timer;
+
+    if (post) {
+      timer = setTimeout(() => {
+        setLoading(false);
+      }, 2000);
+    }
+
     if (post?.author?._id) {
       fetchmore(post.author._id);
     }
+
+    if (post?.likes) {
+      handlelikestatus(post);
+    }
+
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
   }, [post]);
 
   return (
@@ -265,123 +328,134 @@ export const ContentView = ({
       <GlobalStyle />
       <MainDiv>
         <DivOne>
-          <PostContent>
-            <PostHeader>
-              <AuthorInfo>
-                {post?.author ? (
-                  <img
-                    src={`http://localhost:3000/${post.author.profilepic}`}
-                    alt="User Profile"
-                  />
-                ) : (
-                  <Skeleton variant="circular" width={50} height={50} />
-                )}
-                {post?.author ? (
-                  <p>{post.author.name}</p>
-                ) : (
-                  <Skeleton variant="rectangular" width={120} height={20} />
-                )}
-              </AuthorInfo>
-
-              <LikeSection>
-                <BiLike size={20} />
-                <span>0</span>
-              </LikeSection>
-            </PostHeader>
-
-            {post?.image ? (
-              <img
-                src={`http://localhost:3000/${post.image}`}
-                alt="Post Image"
-                style={{
-                  width: "100%",
-                  height: "auto",
-                  objectFit: "cover",
-                  margin: "1rem 0",
-                  borderRadius: "0.8rem",
-                }}
-              />
-            ) : (
-              <Skeleton variant="rectangular" width={400} height={200} />
-            )}
-
-            {post?.title ? (
-              <h2 style={{ color: "purple" }}>{post.title}</h2>
-            ) : (
-              <Skeleton variant="text" sx={{ fontSize: "0.9rem" }} />
-            )}
-
-            {post?.content ? (
-              <p dangerouslySetInnerHTML={{ __html: post.content }}></p>
-            ) : (
-              <Skeleton variant="text" width={500} />
-            )}
-          </PostContent>
-
-          <CommentSection>
-            <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
-              <FaComment style={{ color: "#a153d2" }} />
-              <h3 style={{ margin: 0 }}>Comments</h3>
+          {loading && (
+            <div
+              style={{
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <CLoader />
             </div>
-            <CommentList>
-              {post.comments && post.comments.length > 0 ? (
-                post.comments.map((c) => (
-                  <div
-                    key={c._id}
-                    style={{
-                      display: "flex",
-                      alignItems: "flex-start",
-                      gap: "0.7rem",
-                      marginBottom: "1rem",
+          )}
+          <div style={{ display: loading ? "none" : "block" }}>
+            <PostContent>
+              <PostHeader>
+                {post?.author && (
+                  <AuthorInfo>
+                    <img
+                      src={`http://localhost:3000/${post.author.profilepic}`}
+                      alt="User Profile"
+                    />
+                    <p>{post.author.name}</p>{" "}
+                  </AuthorInfo>
+                )}
+                {post?.likes && (
+                  <LikeSection>
+                    {like ? (
+                      <FaThumbsUp
+                        onClick={handleLike}
+                        size={20}
+                        style={{ color: "red", cursor: "pointer" }}
+                      />
+                    ) : (
+                      <BiLike
+                        onClick={handleLike}
+                        size={20}
+                        style={{ color: "#555", cursor: "pointer" }}
+                      />
+                    )}
+                    <span>{post?.likes ? post.likes.length : ""}</span>
+                  </LikeSection>
+                )}
+              </PostHeader>
+              {post?.image && (
+                <img
+                  src={`http://localhost:3000/${post.image}`}
+                  alt="Post Image"
+                  style={{
+                    width: "100%",
+                    height: "auto",
+                    objectFit: "cover",
+                    margin: "1rem 0",
+                    borderRadius: "0.8rem",
+                  }}
+                />
+              )}
+              {post?.title && <h2 style={{ color: "purple" }}>{post.title}</h2>}
+              {post?.content && (
+                <p dangerouslySetInnerHTML={{ __html: post.content }}></p>
+              )}
+            </PostContent>
+            <CommentSection>
+              <div
+                style={{ display: "flex", gap: "6px", alignItems: "center" }}
+              >
+                <FaComment style={{ color: "#a153d2" }} />
+                <h3 style={{ margin: 0 }}>Comments</h3>
+              </div>
+              <CommentList>
+                {post.comments && post.comments.length > 0 ? (
+                  post.comments.map((c) => (
+                    <div
+                      key={c._id}
+                      style={{
+                        display: "flex",
+                        alignItems: "flex-start",
+                        gap: "0.7rem",
+                        marginBottom: "1rem",
+                      }}
+                    >
+                      <img
+                        src={`http://localhost:3000/${
+                          c.author?.profilepic || "uploads/default.png"
+                        }`}
+                        alt="User"
+                        style={{
+                          width: "35px",
+                          height: "35px",
+                          borderRadius: "50%",
+                          objectFit: "cover",
+                          flexShrink: 0,
+                        }}
+                      />
+                      <div>
+                        <p style={{ margin: "0", fontWeight: "600" }}>
+                          {c.author?.name || "Unknown"}
+                        </p>
+                        <p style={{ margin: "2px 0", lineHeight: "1.4" }}>
+                          {c.comment}
+                        </p>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p>No comments yet.</p>
+                )}
+              </CommentList>
+
+              {LoggedIn && (
+                <div>
+                  <CommentInput
+                    onChange={(e) => {
+                      setComment(e.target.value);
+                    }}
+                    placeholder="Write a comment..."
+                    rows="2"
+                  />
+                  <CommentButton
+                    onClick={() => {
+                      postComment();
                     }}
                   >
-                    <img
-                      src={`http://localhost:3000/${
-                        c.author?.profilepic || "uploads/default.png"
-                      }`}
-                      alt="User"
-                      style={{
-                        width: "35px",
-                        height: "35px",
-                        borderRadius: "50%",
-                        objectFit: "cover",
-                        flexShrink: 0,
-                      }}
-                    />
-                    <div>
-                      <p style={{ margin: "0", fontWeight: "600" }}>
-                        {c.author?.name || "Unknown"}
-                      </p>
-                      <p style={{ margin: "2px 0", lineHeight: "1.4" }}>
-                        {c.comment}
-                      </p>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p>No comments yet.</p>
+                    Post Comment
+                  </CommentButton>
+                </div>
               )}
-            </CommentList>
-
-            {LoggedIn && (
-              <div>
-                <CommentInput
-                  onChange={(e) => {
-                    setComment(e.target.value);
-                  }}
-                  placeholder="Write a comment..."
-                  rows="2"
-                />
-                <CommentButton
-                  onClick={() => {
-                    postComment();
-                  }}
-                >
-                  Post Comment
-                </CommentButton>
-              </div>
-            )}
-          </CommentSection>
+            </CommentSection>
+          </div>
         </DivOne>
 
         <DivTwo>

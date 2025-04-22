@@ -95,7 +95,7 @@ app.get("/userprofile/info/:userid", async (req, res) => {
 app.get("/p/:userid", async (req, res) => {
   try {
     const posts = await PostModel.find(
-      { author: req.params.userid }, 
+      { author: req.params.userid },
       "title image"
     );
 
@@ -150,35 +150,65 @@ app.get("/posts/:id", async (req, res) => {
     res.status(500).json({ msg: "Server error" });
   }
 });
+app.put("/postlike/", async (req, res) => {
+  try {
+    const { user, postId, like } = req.query;
 
+    if (like === "1") {
+      await PostModel.findByIdAndUpdate(postId, {
+        $addToSet: { likes: user },
+      });
+    }
+
+    if (like === "-1") {
+      await PostModel.findByIdAndUpdate(postId, {
+        $pull: { likes: user },
+      });
+    }
+
+    const updatedPost = await PostModel.findById(postId);
+    const likeCount = updatedPost.likes.length;
+    return res.status(200).json({
+      message: like === "1" ? "Post liked" : "Post unliked",
+      likeCount: likeCount,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
 
 app.get("/allposts", async (req, res) => {
   try {
     const { userid, c } = req.query;
 
     let posts;
+
     if (c) {
-      posts = await PostModel.find({ category: c }).populate(
-        "author",
-        "name profilepic"
-      );
+      posts = await PostModel.find({ category: c })
+        .select("title image author") // only send title, image, and author
+        .populate("author", "name profilepic");
 
       if (!posts) {
         return res.status(400).json({ msg: "Error fetching Posts" });
       }
       return res.status(200).json({ posts });
     }
+
     if (!userid) {
-      posts = await PostModel.find().populate("author", "name profilepic");
+      posts = await PostModel.find()
+        .select("title image author")
+        .populate("author", "name profilepic");
+
       if (!posts) {
         return res.status(400).json({ msg: "Error fetching Posts" });
       }
       return res.status(200).json({ posts });
     } else {
-      posts = await PostModel.find({ author: userid }).populate(
-        "author",
-        "name profilepic"
-      );
+      posts = await PostModel.find({ author: userid })
+        .select("title image author")
+        .populate("author", "name profilepic");
+
       if (!posts) {
         return res.status(400).json({ msg: "Error fetching Posts" });
       }
