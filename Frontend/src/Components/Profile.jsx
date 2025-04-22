@@ -393,8 +393,8 @@ export const ProfileInfo = ({LoggedIn, data}) => {
               {profiledata.profilepic ? (
                 <Image
                   src={
-                    profiledata.profilepic
-                      ? `http://localhost:3000/${profiledata.profilepic}`
+                    profiledata?.profilepic
+                      ? profiledata.profilepic
                       : portfolio
                   }
                 />

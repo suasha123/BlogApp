@@ -7,12 +7,12 @@ const UploadPost = async (req,res)=>{
         return ;
       }
       const userId = req.params.userId;
-      const filePath = `uploads/${req.file.filename}`; 
+      const fileurl = req.file.path; 
       const addPost = await Post.create({
         title : req.body.title,
         content : req.body.content,
         category : req.body.category,
-        image : filePath,
+        image : fileurl,
         author : userId
       })
       await User.findByIdAndUpdate(userId , {
@@ -21,7 +21,6 @@ const UploadPost = async (req,res)=>{
       return res.status(200).json({msg : "Post Uploaded Successfully"});
    }
    catch(err){
-    console.error( err);
     res.status(500).json({ msg: "Internal server error" });
    }
 }

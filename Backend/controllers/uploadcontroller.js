@@ -8,10 +8,10 @@ const uploadProfilePic = async (req, res) => {
         }
 
         const userId = req.params.userId;
-        const filePath = `uploads/${req.file.filename}`; 
+        const fileurl = req.file.path; 
         const updatedUser = await User.findByIdAndUpdate(
             userId,
-            { profilepic : filePath },
+            { profilepic : fileurl },
             { new: true } 
         );
 
@@ -23,7 +23,6 @@ const uploadProfilePic = async (req, res) => {
             message: "Upload successful"
         });
     } catch (error) {
-        console.error(error);
         res.status(500).json({ message: "Upload failed", error: error.message });
     }
 };

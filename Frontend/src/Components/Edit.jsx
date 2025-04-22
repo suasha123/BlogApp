@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import styled, { keyframes } from "styled-components";
 import { Overlayy } from "./Reusuable Component/Overaly";
 import { Modal } from "./Reusuable Component/ModalContent";
-
-
+import { ToastContainer, toast } from 'react-toastify';
 const Input = styled.input`
   width: 100%;
   padding: 0.8rem;
@@ -84,12 +83,15 @@ export const EditModal = ({ data, onClose }) => {
     setFile(selectedFile);
 
     if (selectedFile) {
-      window.alert("Upload Success");
+      toast.success("File Selected success");
+    }
+    else{
+      toast.error("File not selected");
     }
   };
   const handleupload = async () => {
     if (!file) {
-      alert("Please select a file.");
+      toast.error("Please select a file.");
       return;
     }
 
@@ -104,20 +106,19 @@ export const EditModal = ({ data, onClose }) => {
       });
 
       if (res.ok) {
-        alert("Upload successful. Refresh to see updates");
+        toast.success("Upload successful. Refresh to see updates");
         onClose();
       } else {
-        alert("Upload failed.");
+        toast.error("Upload failed.");
       }
     } catch (err) {
-      console.log(err);
-      alert("Error during upload.");
+      toast.error("Error during upload.");
     }
   };
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!file && !bio) {
-      window.alert("Please make changes");
+      toast.warn("Please make changes");
       return;
     }
     if (file) {
@@ -130,6 +131,7 @@ export const EditModal = ({ data, onClose }) => {
 
   return (
     <Overlayy>
+     <ToastContainer />
       <Modal>
         <CloseBtn onClick={onClose}>×</CloseBtn>
         <h2 style={{ fontFamily: "Nunito", marginBottom: "10px" }}>

@@ -81,7 +81,7 @@ export const Followwee = ({ onClose, whattoFetch, finalid }) => {
               }}
             >
               <Avatar
-                src={`http://localhost:3000/${user.profilepic}`}
+                src={user.profilepic}
                 alt={user.name || "User"}
               />
               <Username>{user.name || "Unnamed User"}</Username>

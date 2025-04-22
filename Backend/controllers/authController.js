@@ -1,4 +1,3 @@
-
 const User = require("../Model/userModel");
 const argon2 = require("argon2");
 const nodemailer = require('nodemailer');
@@ -34,11 +33,9 @@ const userLogin = async (req, res) => {
         process.env.JWT_SECRET, 
         { expiresIn: "1h" }
       );
-      console.log(token);
       return res.status(200).json({ token , msg: "User signed in"  , name : userExists.name , email : userExists.email , id : userExists.id , pic : userExists.profilepic , bio : userExists.bio , postcount : userExists.postCount});
 
   } catch (error) {
-      console.error("Error in /login:", error);
       res.status(500).json({ msg: "Internal Server Error" });
   }
 };
@@ -65,7 +62,6 @@ const sendOtp = async(req , res) =>{
       res.status(200).json({msg : "OTP sent successfully"});
  }
  catch(err){
-       console.log(err)
       res.status(500).json({msg : "failed to send otp"});
  }
 
@@ -93,10 +89,8 @@ const sendOtp = async(req , res) =>{
         try {
             hash = await argon2.hash(password);
         } catch (hashError) {
-            console.error("Password Hashing Error:", hashError);
             return res.status(500).json({ msg: "Error Occurred During Password Hashing" });
         }
-
           const newUser = await User.create({
              name : name,
              email : email,

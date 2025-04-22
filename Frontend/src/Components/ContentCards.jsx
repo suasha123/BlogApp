@@ -103,9 +103,13 @@ const NoPostsContainer = styled.div`
   }
 `;
 
-export const ContentCard = ({ finalid , selectedCategory , setSearchParams}) => {
+export const ContentCard = ({ finalid, selectedCategory, setSearchParams }) => {
   const navigate = useNavigate();
-  const whattofetch = finalid ? `/allposts?userid=${finalid}` : selectedCategory==='allposts' ? "/allposts": `/allposts?c=${encodeURIComponent(selectedCategory)}`;
+  const whattofetch = finalid
+    ? `/allposts?userid=${finalid}`
+    : selectedCategory === "allposts"
+    ? "/allposts"
+    : `/allposts?c=${encodeURIComponent(selectedCategory)}`;
   const [posts, setPosts] = useState([]);
   const [Loading, setLoading] = useState(true);
   const fetchAllposts = async () => {
@@ -119,58 +123,64 @@ export const ContentCard = ({ finalid , selectedCategory , setSearchParams}) => 
       }
     } catch (err) {
       console.log("Error Occurred:", err);
-    } 
+    }
   };
 
   useEffect(() => {
     fetchAllposts();
     setLoading(true);
   }, []);
-  useEffect(()=>{
+  useEffect(() => {
     fetchAllposts();
     setLoading(true);
-  },[finalid, selectedCategory])
-  useEffect(()=>{
+  }, [finalid, selectedCategory]);
+  useEffect(() => {
     let timer;
-    if(posts){
-     timer = setTimeout(()=>{
-        setLoading(false) ;
-      },1000);
+    if (posts) {
+      timer = setTimeout(() => {
+        setLoading(false);
+      }, 1000);
     }
-    return ()=>clearTimeout(timer)
-  },[posts])
+    return () => clearTimeout(timer);
+  }, [posts]);
   return (
     <>
-    {Loading && <Loader />}
+      {Loading && <Loader />}
       <ContentCardMain>
-      {posts.length === 0 && !Loading && (
-        <NoPostsContainer>
-          <img src={noposts} alt="No posts" />
-          <p>No posts found.</p>
-        </NoPostsContainer>
-      )}
+        {posts.length === 0 && !Loading && (
+          <NoPostsContainer>
+            <img src={noposts} alt="No posts" />
+            <p>No posts found.</p>
+          </NoPostsContainer>
+        )}
         {posts.map((ele, index) => (
-          <ContentCardInner onClick={()=>{setSearchParams ? setSearchParams({id: ele._id}) : navigate(`/?id=${ele._id}`); }}  style={{display : Loading ? "none" : "block"  }} key={index}>
+          <ContentCardInner
+            onClick={() => {
+              setSearchParams
+                ? setSearchParams({ id: ele._id })
+                : navigate(`/?id=${ele._id}`);
+            }}
+            style={{ display: Loading ? "none" : "block" }}
+            key={index}
+          >
             <CardHeader>
-              {ele.author.profilepic ? (
+              {ele.author?.profilepic ? (
                 <ProfilePic
-                  src={`http://localhost:3000/${ele.author.profilepic}`}
+                  src={ele.author.profilepic} // Corrected access
                   alt="Author"
                 />
               ) : (
                 <Skeleton variant="circular" width={40} height={40} />
               )}
-              {ele.author.name ? (
+              {ele.author?.name ? (
                 <h3>{ele.author.name}</h3>
               ) : (
                 <Skeleton variant="rectangular" width={165} height={25} />
               )}
             </CardHeader>
+
             {ele.image ? (
-              <CardImage
-                src={`http://localhost:3000/${ele.image}`}
-                alt="Post"
-              />
+              <CardImage src={ele.image} alt="Post" />
             ) : (
               <Skeleton variant="rectangular" width={100} height={180} />
             )}
@@ -180,7 +190,6 @@ export const ContentCard = ({ finalid , selectedCategory , setSearchParams}) => 
               ) : (
                 <Skeleton variant="text" sx={{ fontSize: "1.2rem" }} />
               )}
-             
             </CardBody>
           </ContentCardInner>
         ))}

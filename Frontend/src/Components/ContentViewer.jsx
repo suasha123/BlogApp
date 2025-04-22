@@ -4,6 +4,7 @@ import { FaComment } from "react-icons/fa6";
 import { BiLike } from "react-icons/bi";
 import { FaThumbsUp } from "react-icons/fa";
 import styled, { keyframes } from "styled-components";
+import { toast, ToastContainer } from "react-toastify";
 const GlobalStyle = createGlobalStyle`
   * {
     font-family: 'Nunito', sans-serif;
@@ -206,7 +207,7 @@ export const ContentView = ({
 }) => {
   const [post, setPost] = useState({});
   const [relatedPosts, setRelatedPosts] = useState([]);
-  const [comment, setComment] = useState({});
+  const [comment, setComment] = useState("");
   const [like, setLike] = useState(false);
   const [loading, setLoading] = useState(true);
   const handleLike = async () => {
@@ -223,16 +224,18 @@ export const ContentView = ({
           },
         }
       );
+      const body = await res.json();
       if (res.ok) {
         fetchPost();
+        toast.success(body.message);
         setLike(newstate);
       } else {
+        toast.error(body.message);
         setLike(!newstate);
       }
-      console.log(res);
     } catch (err) {
       setLike(!newstate);
-      console.log(err);
+      toast.error(body.message);
     }
   };
   const postComment = async () => {
@@ -250,15 +253,17 @@ export const ContentView = ({
       });
       const body = await res.json();
       if (res.ok) {
-        console.log(body.comment);
+        toast.success("Comment Posted");
+        fetchPost();
+        setComment("");
       } else {
-        console.log(body.message);
+        toast.error("Unable to post Comment");
+        setComment("");
       }
     } catch (err) {
-      console.log(err);
-    } finally {
+      toast.error("Error Occured");
       setComment("");
-    }
+    } 
   };
   const fetchPost = async () => {
     try {
@@ -301,6 +306,7 @@ export const ContentView = ({
   useEffect(() => {
     fetchPost();
   }, [postFetch]);
+
   useEffect(() => {
     let timer;
 
@@ -325,6 +331,7 @@ export const ContentView = ({
 
   return (
     <>
+    <ToastContainer />
       <GlobalStyle />
       <MainDiv>
         <DivOne>
@@ -346,7 +353,7 @@ export const ContentView = ({
                 {post?.author && (
                   <AuthorInfo>
                     <img
-                      src={`http://localhost:3000/${post.author.profilepic}`}
+                      src={post.author.profilepic}
                       alt="User Profile"
                     />
                     <p>{post.author.name}</p>{" "}
@@ -373,7 +380,7 @@ export const ContentView = ({
               </PostHeader>
               {post?.image && (
                 <img
-                  src={`http://localhost:3000/${post.image}`}
+                  src={post.image}
                   alt="Post Image"
                   style={{
                     width: "100%",
@@ -409,9 +416,9 @@ export const ContentView = ({
                       }}
                     >
                       <img
-                        src={`http://localhost:3000/${
+                        src={
                           c.author?.profilepic || "uploads/default.png"
-                        }`}
+                        }
                         alt="User"
                         style={{
                           width: "35px",
@@ -444,6 +451,7 @@ export const ContentView = ({
                     }}
                     placeholder="Write a comment..."
                     rows="2"
+                    value={comment}
                   />
                   <CommentButton
                     onClick={() => {
@@ -470,7 +478,7 @@ export const ContentView = ({
               >
                 {item.image && (
                   <img
-                    src={`http://localhost:3000/${item.image}`}
+                    src={item.image}
                     alt="Related"
                   />
                 )}

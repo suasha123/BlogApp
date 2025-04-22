@@ -216,7 +216,7 @@ export const NavTopBar = ({
             }}
           >
             <img
-              src={data.pic ? `http://localhost:3000/${data.pic}` : portfolio}
+              src={data.pic ? data.pic : portfolio}
               style={{
                 width: "100%",
                 height: "100%",

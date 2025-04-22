@@ -9,13 +9,11 @@ const uploadRoute = require("./Router/upload");
 const BioRouter = require("./Router/bio");
 const PostModel = require("./Model/Post");
 const User = require("./Model/userModel");
-const mongoose = require("mongoose");
 const CommentModel = require("./Model/Comment");
 dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
-
 app.use(
   cors({
     origin: "http://localhost:5173",
@@ -153,7 +151,9 @@ app.get("/posts/:id", async (req, res) => {
 app.put("/postlike/", async (req, res) => {
   try {
     const { user, postId, like } = req.query;
-
+    if(!user || !postId || !like){
+      return res.status(400).json({message : "Unable to process request"});
+    }
     if (like === "1") {
       await PostModel.findByIdAndUpdate(postId, {
         $addToSet: { likes: user },
@@ -167,13 +167,10 @@ app.put("/postlike/", async (req, res) => {
     }
 
     const updatedPost = await PostModel.findById(postId);
-    const likeCount = updatedPost.likes.length;
     return res.status(200).json({
-      message: like === "1" ? "Post liked" : "Post unliked",
-      likeCount: likeCount,
+      message: like === "1" ? "Post liked" : "Post unliked"
     });
   } catch (err) {
-    console.error(err);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });

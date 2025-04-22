@@ -4,6 +4,7 @@ import Select from "react-select";
 import styled from "styled-components";
 import { Loader } from "./Reusuable Component/Loader";
 import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 const LazyReactQuill = lazy(() => import('react-quill'));
 const MsgConatiner = styled.div`
   width: 20%;
@@ -95,6 +96,7 @@ export const BlogEditor = ({data , LoggedIn}) => {
     return <Navigate to="/sign-up" replace />;
 
 }
+   const navigate = useNavigate();
   const [content, setContent] = useState("");
   const [title, setTitle] = useState("");
   const [filepreview, setFile] = useState(null);
@@ -128,12 +130,6 @@ export const BlogEditor = ({data , LoggedIn}) => {
       setError(true);
       return;
     }
-    console.log({
-      title: title,
-      contenet: content,
-      img: img,
-      category: category,
-    });
     const formdata = new FormData();
     formdata.append("title", title);
     formdata.append("category", category);
@@ -155,6 +151,9 @@ export const BlogEditor = ({data , LoggedIn}) => {
         setvisible(true);
         setError(false);
         setRes(body.msg);
+        setTimeout(()=>{
+          navigate('/');
+        },1000);
       }
       else{
         setvisible(true);
