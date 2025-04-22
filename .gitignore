@@ -1,0 +1,17 @@
+# Ignore backend environment variables
+Backend/.env
+
+# Ignore node_modules (for both backend and frontend)
+Backend/node_modules/
+Frontend/node_modules/
+
+# Ignore log files
+*.log
+
+# Ignore IDE-related files
+.vscode/
+.idea/
+
+# Ignore system files (Windows and macOS)
+Thumbs.db
+.DS_Store
