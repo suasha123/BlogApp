@@ -66,10 +66,10 @@ export const EditModal = ({ data, onClose }) => {
       const msg = await res.json();
       const body = msg.message;
       if(res.ok){
-        window.alert("Bio Changed,Refresh to see updates");
+        toast.success("Bio Changed,Refresh to see updates");
       }
       else{
-        window.alert(body);
+        toast.error("Cannot Update Bio")
       }
     }
     catch(err){

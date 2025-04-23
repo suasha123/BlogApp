@@ -1,73 +1,14 @@
 import { useEffect, useState } from "react";
 import { Navigate, useParams, useNavigate } from "react-router-dom";
-import portfolio from "../assets/portfolio.png";
+import Portfolio from '../assets/portfolio.png'
 import { EditModal } from "./Edit";
 import { ContentCard } from "./ContentCards";
 import { AppFooter } from "./Footer";
 import { Skeleton } from "@mui/material";
 import { Loader } from "./Reusuable Component/Loader";
 import { Followwee } from "./Followers-ingdata";
-import styled, { keyframes } from "styled-components";
-import { UserProfile } from "./UserProfile";
-const mulShdSpin = keyframes`
-  0%, 100% {
-    box-shadow: 0 -3em 0 0.2em, 
-      2em -2em 0 0em, 3em 0 0 -1em, 
-      2em 2em 0 -1em, 0 3em 0 -1em, 
-      -2em 2em 0 -1em, -3em 0 0 -1em, 
-      -2em -2em 0 0;
-  }
-  12.5% {
-    box-shadow: 0 -3em 0 0, 2em -2em 0 0.2em, 
-      3em 0 0 0, 2em 2em 0 -1em, 0 3em 0 -1em, 
-      -2em 2em 0 -1em, -3em 0 0 -1em, 
-      -2em -2em 0 -1em;
-  }
-  25% {
-    box-shadow: 0 -3em 0 -0.5em, 
-      2em -2em 0 0, 3em 0 0 0.2em, 
-      2em 2em 0 0, 0 3em 0 -1em, 
-      -2em 2em 0 -1em, -3em 0 0 -1em, 
-      -2em -2em 0 -1em;
-  }
-  37.5% {
-    box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em,
-      3em 0em 0 0, 2em 2em 0 0.2em, 0 3em 0 0em, 
-      -2em 2em 0 -1em, -3em 0em 0 -1em, -2em -2em 0 -1em;
-  }
-  50% {
-    box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em,
-      3em 0 0 -1em, 2em 2em 0 0em, 0 3em 0 0.2em, 
-      -2em 2em 0 0, -3em 0em 0 -1em, -2em -2em 0 -1em;
-  }
-  62.5% {
-    box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em,
-      3em 0 0 -1em, 2em 2em 0 -1em, 0 3em 0 0, 
-      -2em 2em 0 0.2em, -3em 0 0 0, -2em -2em 0 -1em;
-  }
-  75% {
-    box-shadow: 0em -3em 0 -1em, 2em -2em 0 -1em, 
-      3em 0em 0 -1em, 2em 2em 0 -1em, 0 3em 0 -1em, 
-      -2em 2em 0 0, -3em 0em 0 0.2em, -2em -2em 0 0;
-  }
-  87.5% {
-    box-shadow: 0em -3em 0 0, 2em -2em 0 -1em, 
-      3em 0 0 -1em, 2em 2em 0 -1em, 0 3em 0 -1em, 
-      -2em 2em 0 0, -3em 0em 0 0, -2em -2em 0 0.2em;
-  }
-`;
+import styled from "styled-components";
 
-const StyledLoader = styled.div`
-  color: #fff;
-  font-size: 5px;
-  width: 1em;
-  height: 1em;
-  border-radius: 50%;
-  position: relative;
-  text-indent: -9999em;
-  transform: translateZ(0);
-  animation: ${mulShdSpin} 1.3s infinite linear;
-`;
 
 const PageWrapper = styled.div`
   flex-direction: column;
@@ -390,12 +331,12 @@ export const ProfileInfo = ({LoggedIn, data}) => {
         <ContentWrapper>
           <UserDetailsinnerDiv>
             <Imagediv>
-              {profiledata.profilepic ? (
+              {profiledata.profilepic || profiledata.profilepic==="" ? (
                 <Image
                   src={
-                    profiledata?.profilepic
+                    profiledata?.profilepic && profiledata.profilepic!==""
                       ? profiledata.profilepic
-                      : portfolio
+                      : Portfolio
                   }
                 />
               ) : (

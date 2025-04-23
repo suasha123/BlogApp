@@ -32,6 +32,7 @@ export const HomePage = ({
   const [searchParams, setSearchParams] = useSearchParams();
   const [showcontent , setshowcontent] = useState(false);
   const [postFetch , setPostfetch] = useState("");
+  
   const [isSerachVisible, setSearchVisible] = useState(
     window.innerWidth >= 547
   );

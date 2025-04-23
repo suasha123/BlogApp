@@ -10,6 +10,8 @@ const BioRouter = require("./Router/bio");
 const PostModel = require("./Model/Post");
 const User = require("./Model/userModel");
 const CommentModel = require("./Model/Comment");
+const {setNotification} = require('./controllers/NotificationControllers/CentralNotification');
+const NotificationModel = require("./Model/Notification");
 dotenv.config();
 const app = express();
 app.use(express.json());
@@ -22,6 +24,40 @@ app.use(
 );
 
 const PORT = process.env.PORT;
+app.put('/marknotiOff/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    await NotificationModel.updateMany(
+      { userid: userId, read: false },
+      { $set: { read: true } }
+    );
+    res.status(200).json({ msg: "Notifications marked as read" });
+  } catch (err) {
+    res.status(500).json({ msg: "Error Occurred" });
+  }
+});
+app.get("/notifications/unread-count/:id", async (req, res) => {
+  try {
+    const unreadCount = await NotificationModel.countDocuments({
+      userid: req.params.id,
+      read: false,  
+    });
+    res.status(200).json({ unreadCount });
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching unread notification count" });
+  }
+});
+
+app.get("/notifications/user/:id", async (req, res) => {
+  try {
+    const notifications = await NotificationModel.find({ userid: req.params.id })
+      .sort({ createdAt: -1 }); 
+    res.status(200).json(notifications);
+
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching notifications" });
+  }
+});
 app.get("/lists", async (req, res) => {
   try {
     const { data, userid } = req.query;
@@ -60,6 +96,7 @@ app.put("/updatefollower", async (req, res) => {
       await User.findByIdAndUpdate(followeeId, {
         $addToSet: { followers: followerid },
       });
+        await setNotification("follow" , {followerid, followeeId}); 
     } else if (update === "-1") {
       await User.findByIdAndUpdate(followerid, {
         $pull: { following: followeeId },
@@ -67,6 +104,7 @@ app.put("/updatefollower", async (req, res) => {
       await User.findByIdAndUpdate(followeeId, {
         $pull: { followers: followerid },
       });
+      await setNotification("unfollow" , {followerid, followeeId});
     }
     res.status(200).json({ msg: "Follower count updated" });
   } catch (err) {
@@ -218,7 +256,6 @@ app.get("/allposts", async (req, res) => {
 });
 
 app.use(express.static(path.join(__dirname, "../Frontend/dist")));
-app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
 app.get("*", (req, res) => {
   res.sendFile(path.resolve(__dirname, "../Frontend/dist", "index.html"));
 });

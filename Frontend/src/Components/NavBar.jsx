@@ -4,9 +4,10 @@ import img from "../assets/Bloglogo.png";
 import portfolio from "../assets/portfolio.png";
 import { CiLogin } from "react-icons/ci";
 import { PiList } from "react-icons/pi";
-import { IoIosSearch } from "react-icons/io";
+import { IoIosNotifications, IoIosSearch } from "react-icons/io";
 import { UserProfile } from "./UserProfile";
 import styled from "styled-components";
+import { NotificationPanel } from "./Notification";
 
 export const Div = styled.div`
   display: flex;
@@ -143,6 +144,23 @@ export const Line = styled.div`
   }
 `;
 
+export const NotificationBadge = styled.div`
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color:rgb(151, 91, 255);
+  color: white;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-family: 'Nunito';
+`;
+
 export const NavTopBar = ({
   LoggedIn,
   data,
@@ -156,10 +174,28 @@ export const NavTopBar = ({
   const [profile, setProfile] = useState(false);
   const [clicked, setCliked] = useState(false);
   const [isVisible, setvisible] = useState(false);
+  const [panel, setPanel] = useState(false);
+  const [count, setUnreadCount] = useState(0);
 
   function getdisplay() {
     return clicked ? "block" : "none";
   }
+
+  useEffect(() => {
+    if (data.id) {
+      const fetchUnreadCount = async () => {
+        try {
+          const response = await fetch(`/notifications/unread-count/${data.id}`);
+          const result = await response.json();
+          setUnreadCount(result.unreadCount);
+        } catch (err) {
+          console.error("Error fetching unread notification count:", err);
+        }
+      };
+
+      fetchUnreadCount();
+    }
+  }, [data.id]);
 
   useEffect(() => {
     if (isVisible) {
@@ -201,12 +237,50 @@ export const NavTopBar = ({
         style={{ display: isSerachVisible ? "block" : getdisplay() }}
       />
 
-      <SearchIcon onClick={() => setCliked(!clicked)} />
+      <SearchIcon
+        onClick={() => {
+          setCliked(!clicked);
+          setPanel(false);
+          setProfile(false);
+        }}
+      />
 
       {LoggedIn ? (
-        <>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            gap: "0.9rem",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           <div
-            onClick={() => setProfile(!profile)}
+            style={{ position: "relative" }}
+          >
+            <IoIosNotifications
+              onClick={() => {
+                setPanel(!panel);
+                setProfile(false);
+                setCliked(false);
+              }}
+              size={30}
+              style={{ fill: "rgb(185, 60, 131)", cursor: "pointer" }}
+            />
+
+            {count > 0 && (
+              <NotificationBadge>{count}</NotificationBadge>
+            )}
+          </div>
+
+          {panel && <NotificationPanel userId={data.id} show={panel} setUnreadCount={setUnreadCount}/>}
+
+          <div
+            onClick={() => {
+              setProfile(!profile);
+              setPanel(false);
+              setCliked(false);
+            }}
             style={{
               width: "50px",
               height: "50px",
@@ -233,7 +307,7 @@ export const NavTopBar = ({
               setLoggedIn={setLoggedIn}
             />
           )}
-        </>
+        </div>
       ) : (
         <LoginButton to="/login">
           <CiLogin style={{ fontSize: "20px", strokeWidth: "1.5" }} />
