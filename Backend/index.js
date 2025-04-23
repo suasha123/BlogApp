@@ -24,6 +24,22 @@ app.use(
 );
 
 const PORT = process.env.PORT;
+app.get('/search/:query', async (req, res) => {
+  try {
+    const { query } = req.params;
+    const {page} = req.query;
+    const regexQuery = { $regex: query, $options: 'i' };
+
+    const users = await User.find({ name: regexQuery }).select('name profilepic').skip((Number(page)-1)*10).limit(10);
+    const posts = await PostModel.find({ title: regexQuery }).select('title , image').skip((Number(page)-1)*10).limit(10);
+
+    res.status(200).json({ users, posts });
+  } catch (err) {
+    console.error("Server error:", err.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 app.put('/marknotiOff/:userId', async (req, res) => {
   try {
     const { userId } = req.params;

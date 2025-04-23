@@ -48,6 +48,9 @@ const Panel = styled.div`
     background-color: #bbb;
     border-radius: 4px;
   }
+  @media(max-width : 347px){
+    right : 0px;
+  }
 `;
 
 const NotificationItem = styled.div`
