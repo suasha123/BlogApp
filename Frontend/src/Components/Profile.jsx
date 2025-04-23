@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Navigate, useParams, useNavigate } from "react-router-dom";
-import Portfolio from '../assets/portfolio.png'
+import Portfolio from "../assets/portfolio.png";
 import { EditModal } from "./Edit";
 import { ContentCard } from "./ContentCards";
 import { AppFooter } from "./Footer";
@@ -8,8 +8,7 @@ import { Skeleton } from "@mui/material";
 import { Loader } from "./Reusuable Component/Loader";
 import { Followwee } from "./Followers-ingdata";
 import styled from "styled-components";
-
-
+import { toast, ToastContainer } from "react-toastify";
 const PageWrapper = styled.div`
   flex-direction: column;
   min-height: 100vh;
@@ -198,13 +197,13 @@ const EditPofile = styled.button`
   }
 `;
 
-export const ProfileInfo = ({LoggedIn, data}) => {
+export const ProfileInfo = ({ LoggedIn, data }) => {
   if (!LoggedIn) {
     return <Navigate to="/sign-up" replace />;
   }
 
   const { id } = useParams();
-  if(data.id===id){
+  if (data.id === id) {
     return <Navigate to="/userprofile" replace />;
   }
   const navigate = useNavigate();
@@ -216,6 +215,7 @@ export const ProfileInfo = ({LoggedIn, data}) => {
   const [openlist, setopenlist] = useState(false);
   const [whattoFetch, setWhattoFetch] = useState("");
   const [miniloading, setMiniloading] = useState(false);
+
   const handletoggle = async () => {
     setMiniloading(true);
     const newstate = !followingState;
@@ -286,25 +286,29 @@ export const ProfileInfo = ({LoggedIn, data}) => {
     if (id) getfollowingStatus();
   }, [finalid]);
 
-
   useEffect(() => {
     let timer;
-    if(profiledata){
+    if (profiledata) {
       timer = setTimeout(() => {
         setLoading(false);
       }, 2000);
     }
-  
+
     return () => clearTimeout(timer);
   }, [profiledata]);
-  
 
   return (
     <>
+      <ToastContainer />
       {loading && <Loader />}
       <PageWrapper style={{ display: loading ? "none" : "flex" }}>
         {openModal && !id && (
-          <EditModal data={data} onClose={() => setOpenModal(false)} />
+          <EditModal
+            data={data}
+            onClose={() => {
+              setOpenModal(false);
+            }}
+          />
         )}
         {!id && (
           <EditPofile onClick={() => setOpenModal(true)}>
@@ -331,10 +335,10 @@ export const ProfileInfo = ({LoggedIn, data}) => {
         <ContentWrapper>
           <UserDetailsinnerDiv>
             <Imagediv>
-              {profiledata.profilepic || profiledata.profilepic==="" ? (
+              {profiledata.profilepic || profiledata.profilepic === "" ? (
                 <Image
                   src={
-                    profiledata?.profilepic && profiledata.profilepic!==""
+                    profiledata?.profilepic && profiledata.profilepic !== ""
                       ? profiledata.profilepic
                       : Portfolio
                   }
@@ -455,7 +459,7 @@ export const ProfileInfo = ({LoggedIn, data}) => {
           >
             Posts
           </div>
-          <ContentCard   finalid={finalid} />
+          <ContentCard finalid={finalid} />
         </ContentWrapper>
 
         <AppFooter />

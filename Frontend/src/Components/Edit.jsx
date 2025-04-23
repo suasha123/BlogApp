@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import styled, { keyframes } from "styled-components";
+import styled from "styled-components";
 import { Overlayy } from "./Reusuable Component/Overaly";
 import { Modal } from "./Reusuable Component/ModalContent";
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast } from "react-toastify";
+
 const Input = styled.input`
   width: 100%;
   padding: 0.8rem;
@@ -24,7 +25,8 @@ const TextArea = styled.textarea`
 `;
 
 const Button = styled.button`
-  background: linear-gradient(135deg, #a445b2, #d41872);
+  background: ${({ loading }) =>
+    loading ? "#823b99" : "linear-gradient(135deg, #a445b2, #d41872)"};
   color: white;
   padding: 0.7rem 1.5rem;
   border: none;
@@ -32,11 +34,12 @@ const Button = styled.button`
   font-weight: bold;
   font-size: 1rem;
   margin-top: 1rem;
-  cursor: pointer;
-  transition: transform 0.2s ease;
+  cursor: ${({ loading }) => (loading ? "not-allowed" : "pointer")};
+  opacity: ${({ loading }) => (loading ? 0.7 : 1)};
+  transition: transform 0.2s ease, background 0.3s ease;
 
   &:hover {
-    transform: scale(1.05);
+    transform: ${({ loading }) => (loading ? "none" : "scale(1.05)")};
   }
 `;
 
@@ -51,44 +54,46 @@ const CloseBtn = styled.button`
   cursor: pointer;
 `;
 
-export const EditModal = ({ data, onClose }) => {
+export const EditModal = ({ data, onClose}) => {
   const [file, setFile] = useState(null);
-  const [bio, setBio] = useState();
-  const handlebio = async()=>{
-    try{
-      const res = await fetch(`/changebio/update/${data.id}`,{
-        method  : "POST",
-        headers : {
-         "Content-Type" : "application/json",
+  const [bio, setBio] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handlebio = async () => {
+    try {
+      const res = await fetch(`/changebio/update/${data.id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-        body : JSON.stringify({bio})
-      })
+        body: JSON.stringify({ bio }),
+      });
       const msg = await res.json();
-      const body = msg.message;
-      if(res.ok){
-        toast.success("Bio Changed,Refresh to see updates");
+      if (res.ok) {
+        toast.success("Bio Changed succesfully . Refresh to see updates")
+        setTimeout(()=>{
+          onClose();
+        },6000)
+       
+      } else {
+        toast.error("Cannot Update Bio");
       }
-      else{
-        toast.error("Cannot Update Bio")
-      }
+    } catch (err) {
+      toast.error("Cannot Update Bio");
     }
-    catch(err){
-      console.log(err);
-      window.alert(err);
-    }
-  }
+  };
+
   const handleFile = (e) => {
     const selectedFile = e.target.files[0];
-    console.log(selectedFile);
     setFile(selectedFile);
 
     if (selectedFile) {
-      toast.success("File Selected success");
-    }
-    else{
+      toast.success("File Selected successfully");
+    } else {
       toast.error("File not selected");
     }
   };
+
   const handleupload = async () => {
     if (!file) {
       toast.error("Please select a file.");
@@ -106,8 +111,10 @@ export const EditModal = ({ data, onClose }) => {
       });
 
       if (res.ok) {
-        toast.success("Upload successful. Refresh to see updates");
-        onClose();
+        toast.success("Profile pic changed . Refresh to see updates");
+        setTimeout(()=>{
+          onClose();
+        },6000);
       } else {
         toast.error("Upload failed.");
       }
@@ -115,23 +122,33 @@ export const EditModal = ({ data, onClose }) => {
       toast.error("Error during upload.");
     }
   };
-  const handleSubmit = (e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!file && !bio) {
       toast.warn("Please make changes");
       return;
     }
-    if (file) {
-      handleupload();
-    }
-    if (bio) {
-      handlebio();
+
+    setLoading(true);
+
+    try {
+      if (file) {
+        await handleupload();
+      }
+      if (bio) {
+        await handlebio();
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
+    <>
+    <ToastContainer />
     <Overlayy>
-     <ToastContainer />
       <Modal>
         <CloseBtn onClick={onClose}>×</CloseBtn>
         <h2 style={{ fontFamily: "Nunito", marginBottom: "10px" }}>
@@ -163,14 +180,15 @@ export const EditModal = ({ data, onClose }) => {
             rows="3"
             placeholder="Update your bio..."
             value={bio}
-            style={{
-              outline: "none",
-            }}
             onChange={(e) => setBio(e.target.value)}
+            style={{ outline: "none" }}
           />
-          <Button type="submit">Submit</Button>
+          <Button type="submit" disabled={loading} loading={loading}>
+            {loading ? "Processing..." : "Submit"}
+          </Button>
         </form>
       </Modal>
-      </Overlayy>
+    </Overlayy>
+    </>
   );
 };
