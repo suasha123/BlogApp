@@ -5,6 +5,7 @@ import { BiLike } from "react-icons/bi";
 import { FaThumbsUp } from "react-icons/fa";
 import styled, { keyframes } from "styled-components";
 import { toast, ToastContainer } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 const GlobalStyle = createGlobalStyle`
   * {
     font-family: 'Nunito', sans-serif;
@@ -210,6 +211,7 @@ export const ContentView = ({
   const [comment, setComment] = useState("");
   const [like, setLike] = useState(false);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
   const handleLike = async () => {
     try {
       const newstate = !like;
@@ -351,7 +353,7 @@ export const ContentView = ({
             <PostContent>
               <PostHeader>
                 {post?.author && (
-                  <AuthorInfo>
+                  <AuthorInfo onClick={()=> navigate(`/userprofile/${post.author._id}`)}>
                     <img
                       src={post.author.profilepic}
                       alt="User Profile"

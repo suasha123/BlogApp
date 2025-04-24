@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import img from "../assets/Bloglogo.png";
+import img from "../assets/blogss.png";
 import portfolio from "../assets/portfolio.png";
 import { CiLogin } from "react-icons/ci";
 import { PiList } from "react-icons/pi";
@@ -314,7 +314,7 @@ export const NavTopBar = ({
 
       {!isSerachVisible && <PiList onClick={() => setopen(true)} />}
 
-      <img src={img} alt="Blog Logo" />
+      <img src={img} alt="Blog Logo"  width={100} height={30}/>
 { !isSerachVisible ?  (clicked ? ( <Input
         placeholder="Search here..."
         value={query}

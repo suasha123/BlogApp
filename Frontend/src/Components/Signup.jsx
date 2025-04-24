@@ -1,5 +1,5 @@
 import { FcGoogle } from "react-icons/fc";
-import img from "../assets/Bloglogo.png";
+import img from "../assets/blogss.png";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -322,7 +322,7 @@ export const Signup = () => {
           }}
         >
           {" "}
-          <img src={img} />{" "}
+          <img src={img} height={40} width={150}/>{" "}
         </div>
         <h2
           style={{

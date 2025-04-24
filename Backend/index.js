@@ -237,7 +237,7 @@ app.get("/allposts", async (req, res) => {
 
     if (c) {
       posts = await PostModel.find({ category: c })
-        .select("title image author") // only send title, image, and author
+        .select("title image author")
         .populate("author", "name profilepic");
 
       if (!posts) {

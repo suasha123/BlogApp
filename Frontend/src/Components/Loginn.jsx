@@ -1,5 +1,5 @@
 import { FcGoogle } from "react-icons/fc";
-import img from "../assets/Bloglogo.png";
+import img from "../assets/blogss.png";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { useState } from "react";
@@ -187,7 +187,7 @@ export const Login = ({setLoggedIn , setData ,setbuttonclicked}) => {
         </MsgConatiner>
         <StyledContainer>
           <div style={{ alignSelf: "center" }}>
-            <img src={img} alt="Blog Logo" />
+            <img src={img} alt="Blog Logo" height={30} width={100}/>
           </div>
           <h2 style={{ alignSelf: "center", fontFamily: "Nunito" }}>
             Login into account!

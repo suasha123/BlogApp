@@ -48,7 +48,7 @@ export const AppFooter = () => {
           <FooterLink href="#">Terms</FooterLink>
           <FooterLink href="#">Contact</FooterLink>
         </FooterLinks>
-        <Copyright>© {new Date().getFullYear()} G Blog. All rights reserved.</Copyright>
+        <Copyright>© {new Date().getFullYear()}  Bloggify. {" "}All rights reserved.</Copyright>
       </FooterContainer>
     </Footer>
   );

@@ -1,8 +1,11 @@
+const dotenv = require("dotenv");
+dotenv.config();
 const User = require("../Model/userModel");
 const argon2 = require("argon2");
 const nodemailer = require('nodemailer');
 const otpStore = new Map();
 const jwt = require("jsonwebtoken");
+const { configDotenv } = require("dotenv");
 function validEmail(email){
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return emailRegex.test(email);
@@ -13,7 +16,7 @@ const transport = nodemailer.createTransport({
         service: "gmail",
         auth : {
             user : "suryaprataps471@gmail.com",
-            pass : "krsb hbmy gviu ycdt"
+            pass : process.env.GooglePass
         }
 });
 
