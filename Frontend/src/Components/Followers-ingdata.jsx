@@ -45,7 +45,7 @@ export const Followwee = ({ onClose, whattoFetch, finalid }) => {
   const [lists, setLists] = useState([]);
   const fetchlists = async () => {
     try {
-      const res = await fetch(`/lists?data=${whattoFetch}&userid=${finalid}`);
+      const res = await fetch(`https://blogapp-45n2.onrender.com/lists?data=${whattoFetch}&userid=${finalid}`);
       const data = await res.json();
       if (res.ok) {
         setLists(data.final);

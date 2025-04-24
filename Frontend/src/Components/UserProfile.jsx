@@ -29,7 +29,7 @@ export const UserProfile = ({ data, setData, setLoggedIn }) => {
           fontWeight: "600",
         }}
       >
-        {data.name || "surya partap singh"}
+        {data.name}
       </div>
       <div
         style={{
@@ -37,7 +37,7 @@ export const UserProfile = ({ data, setData, setLoggedIn }) => {
           fontWeight: "600",
         }}
       >
-        {data.email || "email.com"}
+        {data.email }
       </div>
       <div
         style={{

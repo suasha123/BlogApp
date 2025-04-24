@@ -61,7 +61,7 @@ export const EditModal = ({ data, onClose}) => {
 
   const handlebio = async () => {
     try {
-      const res = await fetch(`/changebio/update/${data.id}`, {
+      const res = await fetch(`https://blogapp-45n2.onrender.com/changebio/update/${data.id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -105,7 +105,7 @@ export const EditModal = ({ data, onClose}) => {
     formData.append("bio", bio);
 
     try {
-      const res = await fetch(`/uploadpic/upload-img/${data.id}`, {
+      const res = await fetch(`https://blogapp-45n2.onrender.com/uploadpic/upload-img/${data.id}`, {
         method: "POST",
         body: formData,
       });

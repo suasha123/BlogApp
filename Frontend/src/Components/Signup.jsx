@@ -245,7 +245,7 @@ export const Signup = () => {
     }
     try {
       isLoading(true);
-      const res = await fetch('/auth/otp-generate', {
+      const res = await fetch('https://blogapp-45n2.onrender.com/auth/otp-generate', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -287,7 +287,7 @@ export const Signup = () => {
 
   async function handleData(userSignUp) {
     try {
-      const res = await fetch("/auth/sign-user", {
+      const res = await fetch("https://blogapp-45n2.onrender.com/auth/sign-user", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -216,7 +216,7 @@ export const ContentView = ({
     try {
       const newstate = !like;
       const res = await fetch(
-        `/postlike/?user=${curruserid}&postId=${postFetch}&like=${
+        `https://blogapp-45n2.onrender.com/postlike/?user=${curruserid}&postId=${postFetch}&like=${
           newstate ? 1 : -1
         }`,
         {
@@ -242,7 +242,7 @@ export const ContentView = ({
   };
   const postComment = async () => {
     try {
-      const res = await fetch("/post/comment", {
+      const res = await fetch("https://blogapp-45n2.onrender.com/post/comment", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -269,7 +269,7 @@ export const ContentView = ({
   };
   const fetchPost = async () => {
     try {
-      const res = await fetch(`/posts/${postFetch}`);
+      const res = await fetch(`https://blogapp-45n2.onrender.com/posts/${postFetch}`);
       const data = await res.json();
       if (res.ok) {
         setPost(data.post);
@@ -283,7 +283,7 @@ export const ContentView = ({
 
   const fetchmore = async (userid) => {
     try {
-      const res = await fetch(`/p/${userid}`);
+      const res = await fetch(`https://blogapp-45n2.onrender.com/p/${userid}`);
       const data = await res.json();
       if (res.ok) {
         const filtered = data.posts.filter((p) => p._id !== post._id);

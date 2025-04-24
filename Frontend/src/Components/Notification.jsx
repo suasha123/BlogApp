@@ -81,7 +81,7 @@ export const NotificationPanel = ({ userId, show  , setUnreadCount}) => {
   const [loading, setLoading] = useState(true);
   const setOffNoti = async()=>{
          try{
-             await fetch(`/marknotiOff/${userId}`,{
+             await fetch(`https://blogapp-45n2.onrender.com/marknotiOff/${userId}`,{
               method : 'PUT',
               headers : {
                 'Content-type' : 'application/json'
@@ -96,7 +96,7 @@ export const NotificationPanel = ({ userId, show  , setUnreadCount}) => {
   useEffect(() => {
     const fetchNotifs = async () => {
       try {
-        const res = await fetch(`/notifications/user/${userId}`);
+        const res = await fetch(`https://blogapp-45n2.onrender.com/notifications/user/${userId}`);
         const data = await res.json();
         setNotifications(data);
       } catch (err) {

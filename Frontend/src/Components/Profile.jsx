@@ -221,7 +221,7 @@ export const ProfileInfo = ({ LoggedIn, data }) => {
     const newstate = !followingState;
     try {
       const res = await fetch(
-        `/updatefollower/?followerid=${data.id}&followeeId=${finalid}&update=${
+        `https://blogapp-45n2.onrender.com/updatefollower/?followerid=${data.id}&followeeId=${finalid}&update=${
           newstate ? 1 : -1
         }`,
         {
@@ -248,7 +248,7 @@ export const ProfileInfo = ({ LoggedIn, data }) => {
 
   const fetchUserProfile = async () => {
     try {
-      const res = await fetch(`/userprofile/info/${finalid}`);
+      const res = await fetch(`https://blogapp-45n2.onrender.com/userprofile/info/${finalid}`);
       const result = await res.json();
       if (res.ok) {
         setProfiledata({
@@ -267,7 +267,7 @@ export const ProfileInfo = ({ LoggedIn, data }) => {
   const getfollowingStatus = async () => {
     try {
       const res = await fetch(
-        `/getfollowingstatus/?followerid=${data.id}&followeeId=${finalid}`
+        `https://blogapp-45n2.onrender.com/getfollowingstatus/?followerid=${data.id}&followeeId=${finalid}`
       );
       const result = await res.json();
       if (res.ok) {

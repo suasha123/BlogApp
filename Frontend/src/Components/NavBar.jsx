@@ -247,7 +247,7 @@ export const NavTopBar = ({
   const navigate = useNavigate();
   const fetchsearchresult = async (query) => {
     try {
-      const res = await fetch(`/search/${query}?page=${page}`);
+      const res = await fetch(`https://blogapp-45n2.onrender.com/search/${query}?page=${page}`);
       const data = await res.json();
       if (res.ok) {
         setSearchResults(data);
@@ -264,7 +264,7 @@ export const NavTopBar = ({
       const fetchUnreadCount = async () => {
         try {
           const response = await fetch(
-            `/notifications/unread-count/${data.id}`
+            `https://blogapp-45n2.onrender.com/notifications/unread-count/${data.id}`
           );
           const result = await response.json();
           setUnreadCount(result.unreadCount);

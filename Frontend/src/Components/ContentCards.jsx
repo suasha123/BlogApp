@@ -114,7 +114,7 @@ export const ContentCard = ({ finalid, selectedCategory, setSearchParams }) => {
   const [Loading, setLoading] = useState(true);
   const fetchAllposts = async () => {
     try {
-      const res = await fetch(whattofetch);
+      const res = await fetch(`https://blogapp-45n2.onrender.com${whattofetch}`);
       const data = await res.json();
       if (res.ok) {
         setPosts(data.posts);

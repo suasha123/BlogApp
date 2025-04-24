@@ -147,7 +147,7 @@ export const Login = ({setLoggedIn , setData ,setbuttonclicked}) => {
   async function sendUserData(userInfo) {
     console.log(userInfo);
     try {
-      const res = await fetch("/auth/login-info", {
+      const res = await fetch("https://blogapp-45n2.onrender.com/auth/login-info", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

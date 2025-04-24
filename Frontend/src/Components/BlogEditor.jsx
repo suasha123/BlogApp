@@ -141,7 +141,7 @@ export const BlogEditor = ({data , LoggedIn}) => {
     setFile(null);
     setimg(null);
     try{
-      const res = await fetch(`/uploadpic/uploadData/${data.id}`,{
+      const res = await fetch(`https://blogapp-45n2.onrender.com/uploadpic/uploadData/${data.id}`,{
         method : 'POST' ,
         body : formdata,
       })
