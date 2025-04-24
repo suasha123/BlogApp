@@ -32,7 +32,6 @@ const App = () => {
         setLoggedIn(true);
         setData(result);
       } else {
-        console.log(result.message);
         sessionStorage.removeItem("token");
         setLoggedIn(false);
       }
