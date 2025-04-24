@@ -20,7 +20,7 @@ const App = () => {
         setLoggedIn(false);
         return;
       }
-      const res = await fetch("/auth/verify-token", {
+      const res = await fetch("https://blogapp-45n2.onrender.com/auth/verify-token", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
