@@ -219,7 +219,6 @@ export const Signup = () => {
       return;
     }
     handleData(userSignUp);
-    console.log(userSignUp);
   }
   function getBorder() {
     if (hover) {
