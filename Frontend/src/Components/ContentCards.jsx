@@ -139,7 +139,7 @@ export const ContentCard = ({ finalid, selectedCategory, setSearchParams }) => {
     if (posts) {
       timer = setTimeout(() => {
         setLoading(false);
-      }, 1500);
+      }, 2000);
     }
     return () => clearTimeout(timer);
   }, [posts]);
@@ -166,7 +166,7 @@ export const ContentCard = ({ finalid, selectedCategory, setSearchParams }) => {
             <CardHeader>
               {ele.author?.profilepic ? (
                 <ProfilePic
-                  src={ele.author.profilepic} // Corrected access
+                  src={ele.author.profilepic} 
                   alt="Author"
                 />
               ) : (
