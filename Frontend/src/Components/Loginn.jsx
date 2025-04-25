@@ -59,7 +59,7 @@ const InputPass = styled.input`
 `;
 const Button = styled.button`
   font-family: Nunito;
-  background-color: #7c3aed;
+  background-color:${({process})=> process ? 'rgb(183, 141, 255)': ' #7c3aed'};
   outline: none;
   border: none;
   border-radius: 5px;
@@ -134,6 +134,7 @@ export const Login = ({setLoggedIn , setData ,setbuttonclicked}) => {
   const [res, setRes] = useState("");
   const [errors , setError] = useState(false);
   const [isVisible, setvisible] = useState(false);
+  const [process , setProcess] = useState(false);
   useEffect(() => {
     if (isVisible) {
       const timer = setTimeout(() => {
@@ -145,8 +146,9 @@ export const Login = ({setLoggedIn , setData ,setbuttonclicked}) => {
     
   }, [isVisible]);
   async function sendUserData(userInfo) {
-    console.log(userInfo);
+    setProcess(true);
     try {
+      setProcess(true);
       const res = await fetch("https://blogapp-45n2.onrender.com/auth/login-info", {
         method: "POST",
         headers: {
@@ -155,6 +157,9 @@ export const Login = ({setLoggedIn , setData ,setbuttonclicked}) => {
         body: JSON.stringify(userInfo),
       });
       const body = await res.json();
+      if(res){
+        setProcess(false);
+      }
       if(!res.ok){
       setError(true);
       setRes(body.msg);
@@ -233,10 +238,12 @@ export const Login = ({setLoggedIn , setData ,setbuttonclicked}) => {
             />
           </div>
           <Button
+            process = {process}
+            disabled={process}
             style={{ fontSize: "14px", marginBottom: "13px" }}
             onClick={() => { sendUserData(userInfo) , setbuttonclicked(true)}}
           >
-            Sign In
+            {process ? "Processing..."  : "Sign In" }
           </Button>
           <span style={{ fontFamily: "Nunito", alignSelf: "center" }}>
             Don't have an account?{" "}
