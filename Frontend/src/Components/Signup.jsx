@@ -79,7 +79,7 @@ const InputPass = styled.input`
 
 const Button = styled.button`
   font-family: Nunito;
-  background-color:${({process})=> process ?  ' #7c3aed':  'rgb(183, 141, 255)'}
+  background-color:${({process})=> process ? 'rgb(183, 141, 255)': ' #7c3aed'};
   outline: none;
   border: none;
   border-radius: 5px;
