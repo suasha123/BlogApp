@@ -145,6 +145,15 @@ export const Login = ({setLoggedIn , setData ,setbuttonclicked}) => {
     }
     
   }, [isVisible]);
+  function checkFields() {
+    if (!userInfo.email || !userInfo.password) {
+      setvisible(true);
+      setError(true);
+      setRes("All input Fileds are required");
+      return;
+    }
+    sendUserData(userInfo);
+  }
   async function sendUserData(userInfo) {
     setProcess(true);
     try {
@@ -241,7 +250,7 @@ export const Login = ({setLoggedIn , setData ,setbuttonclicked}) => {
             process = {process}
             disabled={process}
             style={{ fontSize: "14px", marginBottom: "13px" }}
-            onClick={() => { sendUserData(userInfo) , setbuttonclicked(true)}}
+            onClick={() => { checkFields() , setbuttonclicked(true)}}
           >
             {process ? "Processing..."  : "Sign In" }
           </Button>
