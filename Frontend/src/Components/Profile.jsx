@@ -335,7 +335,7 @@ export const ProfileInfo = ({ LoggedIn, data }) => {
         <ContentWrapper>
           <UserDetailsinnerDiv>
             <Imagediv>
-              {profiledata.profilepic || profiledata.profilepic && (
+              {profiledata?.profilepic && (
                 <Image
                   src={
                     profiledata?.profilepic && profiledata.profilepic !== ""
