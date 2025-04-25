@@ -79,7 +79,7 @@ const InputPass = styled.input`
 
 const Button = styled.button`
   font-family: Nunito;
-  background-color: #7c3aed;
+  background-color:${({process})=> process ? 'rgb(183, 141, 255)' : ' #7c3aed'}
   outline: none;
   border: none;
   border-radius: 5px;
@@ -193,6 +193,7 @@ export const Signup = () => {
   const [clicked, setClicked] = useState(false);
   const [err, setErr] = useState(false);
   const [loading , isLoading] = useState(false);
+  const [process , setProcess] = useState(false);
   const [userSignUp, setuserSignUp] = useState({
     name: "",
     email: "",
@@ -285,6 +286,7 @@ export const Signup = () => {
   }, [isVisible]);
 
   async function handleData(userSignUp) {
+    setProcess(true);
     try {
       const res = await fetch("https://blogapp-45n2.onrender.com/auth/sign-user", {
         method: "POST",
@@ -297,6 +299,9 @@ export const Signup = () => {
         setErr(true);
       } else {
         setErr(false);
+      }
+      if(res){
+        setProcess(false);
       }
       const body = await res.json();
       setvisible(true);
@@ -471,6 +476,8 @@ export const Signup = () => {
         </div>
 
         <Button
+          disabled={process}
+          process = {process}
           style={{
             fontSize: "14px",
             marginBottom: "13px",
@@ -479,7 +486,7 @@ export const Signup = () => {
             checkFields();
           }}
         >
-          Sign Up
+          {process ? "Processing..." : "Sign Up"}
         </Button>
         <span
           style={{
