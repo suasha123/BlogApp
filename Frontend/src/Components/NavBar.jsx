@@ -305,7 +305,7 @@ export const NavTopBar = ({
 
   return (
     <Div>
-      {buttonclicked && (
+      {buttonclicked && LoggedIn(
         <MsgConatiner visible={isVisible}>
           Login Successful
           <Line visible={isVisible} />
