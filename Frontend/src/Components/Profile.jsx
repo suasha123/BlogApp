@@ -335,7 +335,7 @@ export const ProfileInfo = ({ LoggedIn, data }) => {
         <ContentWrapper>
           <UserDetailsinnerDiv>
             <Imagediv>
-              {profiledata.profilepic || profiledata.profilepic === "" ? (
+              {profiledata.profilepic || profiledata.profilepic && (
                 <Image
                   src={
                     profiledata?.profilepic && profiledata.profilepic !== ""
@@ -343,9 +343,7 @@ export const ProfileInfo = ({ LoggedIn, data }) => {
                       : Portfolio
                   }
                 />
-              ) : (
-                <Skeleton variant="circular" width={70} height={70} />
-              )}
+              ) }
             </Imagediv>
 
             <UserInnerDetails>
